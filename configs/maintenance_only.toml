@@ -9,10 +9,10 @@ active_rule_token_limit = 2000
 max_proposals_per_interaction = 1
 
 [validation]
-probe_limit = 20
+probe_limit = 12
 max_new_harmful_regressions = 0
 max_new_benign_regressions = 0
 
 [maintenance]
-every_interactions = 25
+every_interactions = 10
 candidates_per_interval = 1

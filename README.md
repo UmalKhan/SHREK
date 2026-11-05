@@ -10,7 +10,7 @@ Under limited active-memory and update-testing budgets, does validating both new
 
 ## Current status
 
-Project scaffold and methodology only. The command line can display project information. Model calls, baseline defense, rule learning, validation, maintenance, and benchmark evaluation have not been implemented. No results or novelty claims have been established.
+Phase 1 infrastructure is implemented: configuration, model-call interface/accounting, versioned SQLite memory, split auditing, and a scripted offline demo. Baseline model reasoning and SHREK behavioral validation/maintenance are not implemented yet. No research results or novelty claims have been established.
 
 Read [the detailed methodology](docs/methodology.md) before implementing the research components. See [the baseline notes](docs/baseline.md) for external sources and reproduction boundaries.
 
@@ -23,6 +23,8 @@ python -m venv .venv
 .\.venv\Scripts\python.exe -m pip install -e ".[dev]"
 .\.venv\Scripts\python.exe -m shrek --help
 .\.venv\Scripts\python.exe -m shrek --version
+.\.venv\Scripts\python.exe -m shrek demo
+.\.venv\Scripts\python.exe -m pytest -q
 Copy-Item .env.example .env
 ```
 
@@ -63,3 +65,7 @@ The supplied configs describe controlled-budget experiments, not an exact reprod
 6. Four-way experiments, returning attack families, and feedback-noise stress tests.
 
 No upstream research code is required to initialize this project. Attribute any later reused code and preserve its license. Do not claim an official reproduction without checking fidelity.
+
+## Phase checkpoints
+
+See [Phase 1 verification](docs/phase1.md). The demo is explicitly synthetic and cannot support research performance claims.
