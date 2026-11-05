@@ -12,12 +12,16 @@ dependencies = []
 
 [project.optional-dependencies]
 dev = ["pytest>=8,<10"]
+hf = ["torch>=2.2,<3", "transformers>=4.46,<5", "accelerate>=1,<2"]
 
 [project.scripts]
 shrek = "shrek.__main__:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.setuptools.package-data]
+shrek = ["prompt_templates/*.txt"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

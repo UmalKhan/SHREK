@@ -10,13 +10,13 @@ Under limited active-memory and update-testing budgets, does validating both new
 
 ## Current status
 
-Phase 1 infrastructure is implemented: configuration, model-call interface/accounting, versioned SQLite memory, split auditing, and a scripted offline demo. Baseline model reasoning and SHREK behavioral validation/maintenance are not implemented yet. No research results or novelty claims have been established.
+Phases 1 and 2 software is implemented: configuration, call accounting, versioned SQLite memory, split auditing, paper-based baseline learning, local/HTTP model adapters, chronological runs, and a GPU handoff notebook. Offline fixtures and software tests are verified. Real-model execution and calibration on the group's GPU PC/Colab are pending. SHREK behavioral admission validation and periodic maintenance are not implemented yet. No research results or novelty claims have been established.
 
 Read [the detailed methodology](docs/methodology.md) before implementing the research components. See [the baseline notes](docs/baseline.md) for external sources and reproduction boundaries.
 
 ## Setup
 
-Requires Python 3.11 or later. No GPU or model credentials are needed to inspect this scaffold.
+Requires Python 3.11 or later; Python 3.11/3.12 is recommended for the separate GPU inference environment. No GPU or credentials are needed for offline verification.
 
 ```powershell
 python -m venv .venv
@@ -24,24 +24,40 @@ python -m venv .venv
 .\.venv\Scripts\python.exe -m shrek --help
 .\.venv\Scripts\python.exe -m shrek --version
 .\.venv\Scripts\python.exe -m shrek demo
+.\.venv\Scripts\python.exe -m shrek baseline-demo
 .\.venv\Scripts\python.exe -m pytest -q
 Copy-Item .env.example .env
 ```
 
-The scaffold does not load `.env` or contact any endpoint yet. Model/provider dependencies will be selected during implementation. `.env` is ignored by Git.
+The CLI does not automatically load `.env`. Set environment variables explicitly for an authenticated server; `.env` is ignored by Git. The `demo` and `baseline-demo` commands are offline. Only the explicitly selected `run-baseline` backend contacts a server or downloads a model.
+
+## Run on GPU PC or Colab
+
+Start with [Phase 2 instructions](docs/phase2.md) and the [GPU notebook](notebooks/phase2_gpu.ipynb). The notebook accepts a private-repository ZIP, detects hardware, runs tests, loads an explicitly chosen local model, and exports integration artifacts. No paid API is required for local inference.
+
+```powershell
+python -m pip install -e ".[dev,hf]"
+python -m shrek hardware
+python -m shrek run-baseline examples/smoke.jsonl --backend transformers --model Qwen/Qwen2.5-1.5B-Instruct --device cuda --config configs/baseline_paper.toml --max-calls 20 --output runs/real-smoke-01
+```
+
+The example model is a provisional integration candidate; review usable GPU memory first. The two smoke inputs are legitimate requests and do not measure attack resistance. The initial real-model smoke/calibration checkpoint is not yet completed.
 
 ## Layout
 
 ```text
 src/shrek/           Python package and CLI
-configs/             Four proposed experimental variants (TOML)
-prompts/             Baseline, feedback, proposal, and evaluation templates
+configs/             Paper-capacity baseline plus four controlled variants (TOML)
+src/shrek/prompt_templates/ Packaged, adapted baseline role prompts
+prompts/             Notes/folders for later SHREK prompts
 docs/                Methodology and implementation notes
 data/manifests/      Dataset provenance and split manifests
 data/development/    Local development anchors
 data/evaluation/     Local held-out inputs
 runs/                Local logs, snapshots, and reports
-tests/               Future controller-integrity tests
+tests/               Runtime, baseline, and backend integrity tests
+examples/            Input schema and benign integration smoke data
+notebooks/           GPU/Colab handoff notebook
 ```
 
 Downloaded data, run artifacts, and credentials are ignored. Original literature PDFs remain in the parent research workspace and are not copied into this repository.
@@ -53,7 +69,7 @@ Downloaded data, run artifacts, and credentials are ignored. Original literature
 - B2: baseline admission with behaviorally tested maintenance.
 - B3: validated admission with behaviorally tested maintenance.
 
-The supplied configs describe controlled-budget experiments, not an exact reproduction of the paper's full setup. A separate faithful-baseline configuration must be added and documented during baseline implementation. Initial settings are development defaults, not experimentally validated values.
+`configs/baseline_paper.toml` preserves the paper's per-label capacity design without the experimental global cap. Other configs describe controlled-budget experiments. Only B0 execution is implemented in Phase 2; B1/B2/B3 are rejected until SHREK components exist. Prompt/output/model differences are documented in [baseline fidelity notes](docs/baseline.md). Initial settings are development defaults, not experimentally validated values.
 
 ## Implementation order
 
@@ -68,4 +84,4 @@ No upstream research code is required to initialize this project. Attribute any 
 
 ## Phase checkpoints
 
-See [Phase 1 verification](docs/phase1.md). The demo is explicitly synthetic and cannot support research performance claims.
+See [Phase 1 verification](docs/phase1.md) and [Phase 2 verification](docs/phase2.md). Mock demonstrations are explicitly synthetic and cannot support research performance claims.

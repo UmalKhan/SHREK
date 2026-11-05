@@ -1,0 +1,7 @@
+# Paper-based B0: no experimental global memory cap is applied.
+variant = "B0"
+admission_validation = false
+maintenance_enabled = false
+capacity_mode = "paper"
+retrieval_k = 2
+per_label_capacity = 4

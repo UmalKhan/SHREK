@@ -6,6 +6,7 @@ from pathlib import Path
 import time
 from typing import Protocol
 import uuid
+from urllib.error import HTTPError
 
 
 class BudgetExceeded(RuntimeError):
@@ -65,18 +66,23 @@ class MeteredClient:
         self.calls = 0
         self.input_tokens = self.output_tokens = 0
         self.unknown_usage_calls = 0
+        self.last_completion: Completion | None = None
 
     def ask(self, role: str, system: str, payload: dict, *, structured: bool = True, event_id: str = ""):
         if self.calls >= self.max_calls:
             raise BudgetExceeded("Model-call budget exhausted; no additional backend call made")
         # Reserve before attempting the call. Failures and invalid outputs still cost calls.
         self.calls += 1
+        self.last_completion = None
+        received = False
         started = time.perf_counter()
         record = {"call_id": uuid.uuid4().hex, "event_id": event_id, "role": role, "model": self.backend.model_id,
                   "is_mock": self.backend.is_mock, "system": system, "payload": payload,
                   "max_output_tokens": self.max_output_tokens, "status": "error"}
         try:
             completion = self.backend.complete(role, system, payload, self.max_output_tokens)
+            received = True
+            self.last_completion = completion
             record["completion"] = asdict(completion)
             if completion.input_tokens is None or completion.output_tokens is None:
                 self.unknown_usage_calls += 1
@@ -89,8 +95,12 @@ class MeteredClient:
             record["status"] = "ok"
             return result
         except Exception as error:
+            if not received:
+                self.unknown_usage_calls += 1
             # Avoid serializing provider exception text, which can contain credentials/URLs.
             record["error_type"] = type(error).__name__
+            if isinstance(error, HTTPError):
+                record["http_status"] = error.code
             raise
         finally:
             record["latency_seconds"] = time.perf_counter() - started

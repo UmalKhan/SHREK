@@ -1,6 +1,6 @@
 # SHREK: Regression-Tested Defensive Memory for Frozen LLMs
 
-Implementation methodology, 6 November 2026. This is a proposed study, not a tested system or an established novelty claim. Initial numbers below are engineering defaults to tune on development data, then freeze before final evaluation.
+Implementation methodology, 6 November 2026. Phases 1-2 software now exists; real GPU/model calibration remains pending. See `phase1.md` and `phase2.md` for verified status and baseline fidelity differences. This is a proposed study, not a tested system or an established novelty claim. Initial numbers below are engineering defaults to tune on development data, then freeze before final evaluation.
 
 ## 1. Objective and research questions
 
@@ -107,7 +107,7 @@ Maintain two runtime-available probe sources:
 - A small fixed development anchor pool, with manually reviewed labels and diverse legitimate/harmful cases. This pool is explicitly extra supervision and is available equally to controlled variants. Its size and annotation effort must be reported.
 - A bounded replay pool of previous interactions with online judgments. Mark these labels as noisy; use reliable evidence and audit a sample. Never silently replace online labels with final benchmark labels.
 
-For a proposal, initially select up to 20 probes: about 8 related harmful cases, 8 related legitimate cases, and 4 older diverse cases split across both classes. The triggering event can be an additional training probe. Counts are defaults, not requirements to fabricate examples when the pool is too small.
+For a proposal, initially select up to 12 probes: about 4 related harmful cases, 4 related legitimate cases, and 4 older diverse cases split across both classes. The triggering event can be an additional training probe. Counts are defaults, not requirements to fabricate examples when the pool is too small.
 
 If relevant probes of either class are missing, defer the change or use the fixed anchors and mark low support. Never construct a probe from a future evaluation example. Do not call deferred changes validated.
 
@@ -136,7 +136,7 @@ If before/after judgments are unstable or ambiguous, defer; allow a bounded repe
 
 ## 9. Maintenance and memory constraints
 
-Every 25 processed interactions, consider at most one revision or archival candidate. Prioritize supported false-refusal events, then redundant coverage, then old low-exposure rules. Do not treat old age alone as evidence a rule is unsafe or useless.
+Every 10 processed interactions, consider at most one revision or archival candidate. Prioritize supported false-refusal events, then redundant coverage, then old low-exposure rules. Do not treat old age alone as evidence a rule is unsafe or useless.
 
 Do not auto-merge rules in the first prototype. Revisions and archiving are enough to test the main hypothesis. Candidate ranking can be heuristic; acceptance must depend on behavioral replay.
 
@@ -192,7 +192,7 @@ Use at least three stream orders if affordable. Judges evaluating a method shoul
 
 Initially allow at most one immediate proposal per interaction, one maintenance candidate per interval, and a fixed global update-testing token/call budget. Once exhausted, freeze further changes and continue scoring requests. Do not make emergency unvalidated updates.
 
-One 20-probe comparison can require up to 40 full defended runs plus response judging. It is not 40 cheap classifier calls. Each defended run can have multiple model calls. Cache current-snapshot outputs by complete input, memory hash, configuration, model revision, and seed where meaningful. Never reuse current outputs after memory changes. Pilot this cost before selecting the final candidate budget.
+One 12-probe comparison can require up to 24 full defended runs plus response judging. It is not 40 cheap classifier calls. Each defended run can have multiple model calls. Cache current-snapshot outputs by complete input, memory hash, configuration, model revision, and seed where meaningful. Never reuse current outputs after memory changes. Pilot this cost before selecting the final candidate budget.
 
 Report practical equal-workload results with costs, plus a predeclared matched-total-inference-budget sensitivity run where feasible. Equal update-candidate limits alone do not mean equal total compute. Count independent behavior groups when computing uncertainty; use paired/group-aware bootstrap summaries where appropriate and report across-order variability separately.
 
@@ -220,10 +220,10 @@ prompts/
   proposal/
   evaluation/
 configs/
-  baseline.yaml
-  admission_only.yaml
-  maintenance_only.yaml
-  combined.yaml
+  baseline.toml
+  admission_only.toml
+  maintenance_only.toml
+  combined.toml
 data/
   manifests/
   development/
@@ -232,21 +232,9 @@ runs/
 tests/
 ```
 
-Minimal stack: Python, a provider client or HTTP library, Pydantic for output schemas, SQLite for persistence, a tokenizer appropriate to the host, YAML configuration, and pytest. Use a single CLI initially. No LangChain, CrewAI, vector database service, dashboard, or Docker is required for this text-only prototype. Pick and pin package versions when implementation begins.
+Minimal stack: Python, a provider client or HTTP library, Pydantic for output schemas, SQLite for persistence, a tokenizer appropriate to the host, TOML configuration, and pytest. Use a single CLI initially. No LangChain, CrewAI, vector database service, dashboard, or Docker is required for this text-only prototype. Pick and pin package versions when implementation begins.
 
-```yaml
-retrieval_k: 2
-per_label_capacity: 4
-active_rule_limit: 20          # controlled-budget runs only
-active_rule_token_limit: 2000 # controlled-budget runs only
-maintenance_every: 25
-maintenance_candidates: 1
-max_proposals_per_interaction: 1
-validation_probe_limit: 20
-max_repair_attempts: 1
-max_new_harmful_regressions: 0
-max_new_benign_regressions: 0
-```
+Current TOML settings live in `configs/`. Deadline-aware development defaults are 12 probes, maintenance every 10 interactions, one maintenance candidate per interval, and one immediate proposal per interaction. The Phase 2 runner supports B0 only; these later-phase controls are not operational yet.
 
 Model IDs, output limits, context limits, and budget ceilings must be selected from an actual pilot; do not embed assumed vendor models/prices in the controller. Treat model outputs as data, validate JSON, and make malformed output defer an update rather than mutate memory.
 
@@ -296,3 +284,7 @@ The proposal is supported if the combined method offers a repeatable useful trad
 - A-MemGuard, validation and corrective memory: https://arxiv.org/abs/2510.02373
 
 The implementation specification above is our proposed design. It should not be attributed wholesale to any one of these papers. A code-available secondary baseline is useful, but a difference in artifact type or a smaller implementation alone is not proof of research novelty.
+
+## Deadline-aware minimum study
+
+For the November 8 course deadline, target 10 harmful + 10 legitimate development anchors, 20 + 20 adaptation inputs, and 10 + 10 independent holdout inputs (80 total examples). These are provisional targets subject to behavior-level grouping and data inventory. Begin with one stream order and add repeats only if measured runtime permits; this is preliminary evidence, not proof of small effects. GPU hardware and real-model calibration remain unknown. There is no paid API budget.

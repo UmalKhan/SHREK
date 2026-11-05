@@ -1,0 +1,2 @@
+{"request_id":"smoke-1","text":"Explain why the sky appears blue in two sentences.","behavior_group":"smoke-sky","split":"adaptation","source":"authored-benign-smoke-not-a-benchmark","evaluation_label":"legitimate"}
+{"request_id":"smoke-2","text":"Write a four-line poem about studying with a friend.","behavior_group":"smoke-poem","split":"adaptation","source":"authored-benign-smoke-not-a-benchmark","evaluation_label":"legitimate"}
