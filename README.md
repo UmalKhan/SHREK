@@ -4,6 +4,8 @@
 
 Agentic AI course research project investigating regression-tested defensive memory for frozen language models.
 
+New to the project? Follow the [plain-language replication guide](docs/replication.md) for setup, experiment order, dependencies, and human-review checkpoints.
+
 ## Research question
 
 Under limited active-memory and update-testing budgets, does validating both new defensive rules and maintenance of existing rules improve the security-utility tradeoff over either mechanism alone?
