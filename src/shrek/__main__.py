@@ -45,6 +45,34 @@ def main() -> None:
     system.add_argument("--max-calls", type=int, default=2000)
     system.add_argument("--max-output-tokens", type=int, default=384)
     system.add_argument("--output", default=None)
+    prepare = commands.add_parser("prepare-study", help="Prepare a pinned 80-example PAIR/XSTest pilot")
+    prepare.add_argument("--output", required=True)
+    prepare.add_argument("--source-dir", default=None, help="Optional local snapshots named pair.json, xstest.csv, and license files")
+    prepare.add_argument("--seed", type=int, default=17)
+    prepare.add_argument("--development-per-class", type=int, default=10)
+    prepare.add_argument("--adaptation-per-class", type=int, default=20)
+    prepare.add_argument("--holdout-per-class", type=int, default=10)
+    comparison_demo = commands.add_parser("compare-demo", help="Run the four-variant pipeline on clearly fictional inputs")
+    comparison_demo.add_argument("--output", default=None)
+    compare = commands.add_parser("compare", help="Run matched B0-B3 adaptation and frozen holdout")
+    compare.add_argument("input")
+    compare.add_argument("--config", default="configs/combined.toml", help="Shared settings; variant flags are assigned by the study")
+    compare.add_argument("--backend", choices=["transformers", "http"], required=True)
+    compare.add_argument("--model", default=os.environ.get("HOST_MODEL"))
+    compare.add_argument("--base-url", default=os.environ.get("MODEL_BASE_URL", "http://127.0.0.1:8000/v1"))
+    compare.add_argument("--device", choices=["auto", "cpu", "cuda"], default="auto")
+    compare.add_argument("--revision", default="main")
+    compare.add_argument("--context-limit", type=int, default=4096)
+    compare.add_argument("--seeds", type=int, nargs="+", default=[17])
+    compare.add_argument("--noise-rate", type=float, default=0.0)
+    compare.add_argument("--order", choices=["shuffle", "preserve"], default="shuffle")
+    compare.add_argument("--max-calls", type=int, default=2000)
+    compare.add_argument("--holdout-calls", type=int, default=500)
+    compare.add_argument("--max-output-tokens", type=int, default=384)
+    compare.add_argument("--output", default=None)
+    score = commands.add_parser("score-study", help="Compute rates/bounds from independent review, preserving missing outcomes")
+    score.add_argument("study_dir")
+    score.add_argument("--reviews", required=True)
     run = commands.add_parser("run-baseline", help="Run the paper-based B0 adaptation on a real model")
     run.add_argument("input", help="JSONL input; use audit-data before research runs")
     run.add_argument("--config", default="configs/baseline_paper.toml")
@@ -94,6 +122,56 @@ def main() -> None:
         print(json.dumps({"passed": report["passed"], "is_mock": True, "checks": report["checks"], "output": output}, indent=2))
         if not report["passed"]:
             raise SystemExit(2)
+    elif args.command == "prepare-study":
+        from shrek.prepare import prepare_study
+        report = prepare_study(args.output, seed=args.seed, source_dir=args.source_dir,
+                               development_per_class=args.development_per_class, adaptation_per_class=args.adaptation_per_class,
+                               holdout_per_class=args.holdout_per_class)
+        print(json.dumps({"output": args.output, "audit": report["audit"], "review_required": report["review_required"], "study_sha256": report["study_sha256"]}, indent=2))
+    elif args.command == "compare-demo":
+        from shrek.config import ExperimentConfig
+        from shrek.shrek_fixtures import ControllerFixtureBackend, fixture_study
+        from shrek.study import run_study
+        output = args.output or "runs/comparison-demo-" + datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S%fZ")
+        template = ExperimentConfig(capacity_mode="controlled", validation_probe_limit=4, validation_min_per_class=2,
+                                    maintenance_every=2, validation_call_budget=400)
+        report = run_study(fixture_study(), ControllerFixtureBackend(), template, output, max_calls=1000, holdout_calls=100)
+        print(json.dumps({"is_mock": report["is_mock"], "execution_complete": report["execution_complete"],
+                          "review_rows": report["review_rows"], "total_model_calls": report["total_model_calls"], "output": output,
+                          "note": "Pipeline verification only; review queue is blank and no effectiveness rates are claimed."}, indent=2))
+        if not report["execution_complete"]:
+            raise SystemExit(2)
+    elif args.command == "compare":
+        from pathlib import Path
+        from shrek.backends import CompatibleHTTPBackend, TransformersBackend
+        from shrek.config import load_config
+        from shrek.data import load_examples, audit_splits
+        from shrek.study import run_study
+        if not args.model or args.max_calls < 1 or args.holdout_calls < 1 or args.max_output_tokens < 1:
+            parser.error("Provide an explicit model and positive stage/output budgets")
+        if not 0 <= args.noise_rate <= 1 or len(set(args.seeds)) != len(args.seeds):
+            parser.error("Use distinct seeds and a noise rate between 0 and 1")
+        examples = load_examples(args.input)
+        audit_splits(examples)
+        config = load_config(args.config)
+        if args.backend == "http" and config.capacity_mode == "controlled":
+            parser.error("Controlled study requires the host tokenizer; use paper capacity for HTTP")
+        output = args.output or "runs/study-" + datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S%fZ")
+        if Path(output).exists():
+            parser.error("Choose a fresh study output directory")
+        backend = (TransformersBackend(args.model, args.revision, args.device, args.context_limit, args.seeds[0])
+                   if args.backend == "transformers" else CompatibleHTTPBackend(args.base_url, args.model, os.environ.get("MODEL_API_KEY")))
+        report = run_study(examples, backend, config, output, seeds=tuple(args.seeds), max_calls=args.max_calls,
+                           holdout_calls=args.holdout_calls, max_output_tokens=args.max_output_tokens,
+                           noise_rate=args.noise_rate, order=args.order, progress=lambda state: print(json.dumps({"progress": state}), flush=True))
+        print(json.dumps({"output": output, "is_mock": report["is_mock"], "execution_complete": report["execution_complete"],
+                          "review_rows": report["review_rows"], "unanswered_holdout": report["unanswered_holdout"],
+                          "total_model_calls": report["total_model_calls"], "note": report["note"]}, indent=2))
+        if not report["execution_complete"]:
+            raise SystemExit(2)
+    elif args.command == "score-study":
+        from shrek.scoring import score_study
+        print(json.dumps(score_study(args.study_dir, args.reviews), indent=2))
     elif args.command == "run-system":
         from pathlib import Path
         from shrek.backends import CompatibleHTTPBackend, TransformersBackend

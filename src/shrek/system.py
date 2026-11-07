@@ -36,7 +36,7 @@ def noisy_feedback(feedback, request_id: str, label: str, rate: float, seed: int
 def run_system(examples: list[Example], backend, config: ExperimentConfig, output: str | Path, *,
                anchors: list[Example] | None = None, learning: bool = True, max_calls: int = 2000,
                max_output_tokens: int = 384, initial_rules: tuple[Rule, ...] = (),
-               noise_rate: float = 0.0, seed: int = 17) -> dict:
+               noise_rate: float = 0.0, seed: int = 17, progress=None) -> dict:
     anchors = anchors or []
     if not examples or len({item.request_id for item in [*anchors, *examples]}) != len(anchors) + len(examples):
         raise ValueError("Need nonempty examples with distinct anchor/runtime IDs")
@@ -52,7 +52,7 @@ def run_system(examples: list[Example], backend, config: ExperimentConfig, outpu
         raise ValueError("Initial memory exceeds the experiment's capacity")
     pool = ProbePool(anchors, config.replay_limit)
     if learning and (config.admission_validation or config.maintenance_enabled):
-        counts = {kind: sum(item.evaluation_label == kind for item in anchors) for kind in ("harmful", "legitimate")}
+        counts = {kind: len({item.behavior_group for item in anchors if item.evaluation_label == kind}) for kind in ("harmful", "legitimate")}
         if any(count < config.validation_min_per_class for count in counts.values()):
             raise ValueError("Provide sufficient development anchors of BOTH classes before running SHREK")
     output = Path(output)
@@ -150,6 +150,9 @@ def run_system(examples: list[Example], backend, config: ExperimentConfig, outpu
                 interactions.append(record)
                 timeline.append({"sequence": sequence, "active_rules": len(current.rules), "active_memory_size": size,
                                  "memory_size_unit": unit, "memory_version": current.version})
+            if progress is not None:
+                progress({"processed": processed, "planned": len(examples), "answered": answered,
+                          "errors": errors, "model_calls": budget.used, "active_rules": len(store.snapshot().rules)})
             if stopped:
                 break
         usage = {"total_calls": budget.used, "max_total_calls": budget.maximum,

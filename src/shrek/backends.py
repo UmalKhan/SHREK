@@ -91,6 +91,10 @@ class TransformersBackend:
     def count_tokens(self, text: str) -> int:
         return len(self.tokenizer.encode(text, add_special_tokens=False))
 
+    def reset_seed(self, seed: int) -> None:
+        self.seed = seed
+        self.torch.manual_seed(seed)
+
     def complete(self, role: str, system: str, payload: dict, max_output_tokens: int) -> Completion:
         messages = [{"role": "system", "content": system},
                     {"role": "user", "content": json.dumps(payload, ensure_ascii=False)}]

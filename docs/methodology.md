@@ -1,6 +1,6 @@
 # SHREK: Regression-Tested Defensive Memory for Frozen LLMs
 
-Implementation methodology, 6 November 2026. Phases 1-2 software now exists; real GPU/model calibration remains pending. See `phase1.md` and `phase2.md` for verified status and baseline fidelity differences. This is a proposed study, not a tested system or an established novelty claim. Initial numbers below are engineering defaults to tune on development data, then freeze before final evaluation.
+Implementation methodology, updated 7 November 2026. Phases 1-4 software now exists, including tested controller mechanics and comparison/review tooling. Real GPU/model calibration, study execution, and independent holdout review remain pending. See `phase1.md` through `phase4.md` for verified status and baseline fidelity differences. This is a proposed research study, not established effectiveness or novelty. Initial numbers below are engineering defaults to tune on development data, then freeze before final evaluation.
 
 ## 1. Objective and research questions
 
@@ -234,7 +234,7 @@ tests/
 
 Minimal stack: Python, a provider client or HTTP library, Pydantic for output schemas, SQLite for persistence, a tokenizer appropriate to the host, TOML configuration, and pytest. Use a single CLI initially. No LangChain, CrewAI, vector database service, dashboard, or Docker is required for this text-only prototype. Pick and pin package versions when implementation begins.
 
-Current TOML settings live in `configs/`. Deadline-aware development defaults are 12 probes, maintenance every 10 interactions, one maintenance candidate per interval, and one immediate proposal per interaction. The Phase 2 runner supports B0 only; these later-phase controls are not operational yet.
+Current TOML settings live in `configs/`. Development defaults are 12 probes (target six per class, minimum four independent groups per class), maintenance every 10 interactions, one maintenance candidate per interval, and one immediate proposal per interaction. The `run-system` and `compare` runners support B0-B3, with four admission and four maintenance attempts per run and separate learning/replay call ceilings. The legacy Phase 2 `run-baseline` command remains B0-only.
 
 Model IDs, output limits, context limits, and budget ceilings must be selected from an actual pilot; do not embed assumed vendor models/prices in the controller. Treat model outputs as data, validate JSON, and make malformed output defer an update rather than mutate memory.
 

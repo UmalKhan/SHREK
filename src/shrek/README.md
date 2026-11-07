@@ -1,8 +1,8 @@
 # Implemented and planned modules
 
-Implemented in Phases 1-2: `config.py`, `schemas.py`, `model_client.py`, `memory.py`, `data.py`, `baseline.py`, `backends.py`, `runner.py`, `hardware.py`, and labeled offline fixtures. Feedback and rule induction currently live in `baseline.py`.
+Implemented in Phases 1-4: the initial foundation/baseline modules plus `probes.py`, `validation.py`, `controller.py`, `system.py`, `prepare.py`, `study.py`, and `scoring.py`. The controller owns candidate acceptance and periodic maintenance; baseline induction and feedback remain in `baseline.py`. Offline fixtures are explicitly marked synthetic.
 
-The following decomposition remains a guide for later work; no empty implementation stubs are created:
+The following original decomposition explains responsibilities; some are combined in the implemented modules rather than empty standalone stubs:
 
 - `config.py`: parse and validate experimental configuration.
 - `schemas.py`: rules, interactions, proposals, memory versions, and reports.

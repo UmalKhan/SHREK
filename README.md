@@ -10,7 +10,7 @@ Under limited active-memory and update-testing budgets, does validating both new
 
 ## Current status
 
-Phases 1-3 software is implemented: the baseline, real-model adapters, admission validation, bounded replay, and tested revision/archival. Offline fixtures verify mechanics; real-model execution and calibration on the group's GPU PC/Colab are pending. No research results or novelty claims have been established. See [Phase 3](docs/phase3.md).
+Phases 1-4 software is implemented: baseline, real-model adapters, admission validation, bounded replay, tested revision/archival, reproducible pilot-data preparation, four-variant comparison, and independent review ingestion. Offline fixtures verify mechanics and public 80-example data preparation is checked. Real GPU/model experiments and holdout review remain pending. No effectiveness result or novelty claim has been established. See [Phase 3](docs/phase3.md) and [Phase 4](docs/phase4.md).
 
 Read [the detailed methodology](docs/methodology.md) before implementing the research components. See [the baseline notes](docs/baseline.md) for external sources and reproduction boundaries.
 
@@ -26,6 +26,7 @@ python -m venv .venv
 .\.venv\Scripts\python.exe -m shrek demo
 .\.venv\Scripts\python.exe -m shrek baseline-demo
 .\.venv\Scripts\python.exe -m shrek shrek-demo
+.\.venv\Scripts\python.exe -m shrek compare-demo
 .\.venv\Scripts\python.exe -m pytest -q
 Copy-Item .env.example .env
 ```
@@ -34,7 +35,7 @@ The CLI does not automatically load `.env`. Set environment variables explicitly
 
 ## Run on GPU PC or Colab
 
-Start with [Phase 2 instructions](docs/phase2.md) and the [GPU notebook](notebooks/phase2_gpu.ipynb). The notebook accepts a private-repository ZIP, detects hardware, runs tests, loads an explicitly chosen local model, and exports integration artifacts. No paid API is required for local inference.
+For the complete controller/comparison workflow, use the [Phases 3-4 GPU notebook](notebooks/phase4_study.ipynb) and [Phase 4 instructions](docs/phase4.md). It accepts a private-repository ZIP, detects hardware, checks real benign integration, prepares pinned pilot data, runs B0-B3, and exports the blank independent review queue. No paid inference API is required for local execution. The earlier [Phase 2 notebook](notebooks/phase2_gpu.ipynb) remains available for baseline-only integration.
 
 ```powershell
 python -m pip install -e ".[dev,hf]"
@@ -43,6 +44,18 @@ python -m shrek run-baseline examples/smoke.jsonl --backend transformers --model
 ```
 
 The example model is a provisional integration candidate; review usable GPU memory first. The two smoke inputs are legitimate requests and do not measure attack resistance. The initial real-model smoke/calibration checkpoint is not yet completed.
+
+## Four-variant pilot
+
+After model/hardware calibration, prepare the real data and run all four variants:
+
+```powershell
+python -m shrek prepare-study --output data/prepared-pilot --seed 17
+python -m shrek compare data/prepared-pilot/study.jsonl --backend transformers --model YOUR_SELECTED_MODEL --device cuda --output runs/pilot-clean
+python -m shrek score-study runs/pilot-clean --reviews runs/pilot-clean/review_queue.csv
+```
+
+Fill the review CSV before the final command. Blank/unknown judgments produce partial metrics and bounds, never invented zero rates. The data builder uses a single published PAIR family and XSTest safe requests, with source/availability limitations detailed in [Phase 4](docs/phase4.md). Model/data choices are provisional development decisions; do not tune on holdout outputs.
 
 ## Layout
 
@@ -85,4 +98,4 @@ No upstream research code is required to initialize this project. Attribute any 
 
 ## Phase checkpoints
 
-See [Phase 1 verification](docs/phase1.md) and [Phase 2 verification](docs/phase2.md). Mock demonstrations are explicitly synthetic and cannot support research performance claims.
+See [Phase 1](docs/phase1.md), [Phase 2](docs/phase2.md), [Phase 3](docs/phase3.md), and [Phase 4](docs/phase4.md). Mock demonstrations establish software behavior only. Real-model calibration, complete GPU study execution, and independent review are still required before claiming research effectiveness.

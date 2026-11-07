@@ -6,6 +6,8 @@ The HTTP integration test needs localhost socket access; if an execution sandbox
 
 ## Later controller checks
 
+Phases 3-4 now additionally test admission regressions, bounded/deferred replay, cache separation, strict historical selection, revision/retirement, shared budgets, matched variant ordering, frozen holdout, seeded feedback noise, missing-outcome denominators, review integrity, deterministic source splitting, and notebook syntax. Real-model hardware execution remains a separate checkpoint.
+
 Add meaningful tests alongside implementation for:
 
 - Rejected changes preserve active memory.

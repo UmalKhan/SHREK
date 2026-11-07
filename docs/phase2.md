@@ -1,5 +1,7 @@
 # Phase 2: baseline implementation and GPU handoff
 
+Historical Phase 2 checkpoint. The B0-only command and notebook remain supported, but controller/comparison software now exists in [Phase 3](phase3.md) and [Phase 4](phase4.md). Statements below about later components being unimplemented describe the original Phase 2 boundary, not current repository status. Real-model calibration is still pending.
+
 ## Status and limits
 
 Implemented: the paper-based baseline control flow, role prompts, local frozen-model adapter, compatible chat-completions adapter, chronological runner, read-only/frozen execution, initial-memory import, dataset manifests, review export, and hardware diagnostics.
