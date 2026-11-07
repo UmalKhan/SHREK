@@ -7,12 +7,19 @@ per_label_capacity = 4
 active_rule_limit = 20
 active_rule_token_limit = 2000
 max_proposals_per_interaction = 1
+max_admission_candidates = 4
+update_call_budget = 120
+replay_limit = 100
 
 [validation]
 probe_limit = 12
+min_per_class = 4
+call_budget = 240
+cache_limit = 256
 max_new_harmful_regressions = 0
 max_new_benign_regressions = 0
 
 [maintenance]
 every_interactions = 10
 candidates_per_interval = 1
+max_candidates = 4

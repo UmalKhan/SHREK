@@ -17,6 +17,19 @@ class ModelOutputError(ValueError):
     pass
 
 
+class CallBudget:
+    """A shared attempt ceiling across inference, learning, and replay clients."""
+    def __init__(self, maximum: int):
+        if type(maximum) is not int or maximum < 1:
+            raise ValueError("Total call budget must be a positive integer")
+        self.maximum, self.used = maximum, 0
+
+    def reserve(self) -> None:
+        if self.used >= self.maximum:
+            raise BudgetExceeded("Shared model-call budget exhausted")
+        self.used += 1
+
+
 @dataclass(frozen=True)
 class Completion:
     text: str
@@ -58,12 +71,14 @@ def parse_object(text: str) -> dict:
 
 
 class MeteredClient:
-    def __init__(self, backend: Backend, log: JsonlLog, max_calls: int = 100, max_output_tokens: int = 384):
+    def __init__(self, backend: Backend, log: JsonlLog, max_calls: int = 100, max_output_tokens: int = 384,
+                 *, budget: CallBudget | None = None, purpose: str = "unspecified"):
         if type(max_calls) is not int or max_calls < 1 or type(max_output_tokens) is not int or max_output_tokens < 1:
             raise ValueError("Call and output limits must be positive integers")
         self.backend, self.log = backend, log
         self.max_calls, self.max_output_tokens = max_calls, max_output_tokens
         self.calls = 0
+        self.budget, self.purpose = budget, purpose
         self.input_tokens = self.output_tokens = 0
         self.unknown_usage_calls = 0
         self.last_completion: Completion | None = None
@@ -71,12 +86,14 @@ class MeteredClient:
     def ask(self, role: str, system: str, payload: dict, *, structured: bool = True, event_id: str = ""):
         if self.calls >= self.max_calls:
             raise BudgetExceeded("Model-call budget exhausted; no additional backend call made")
+        if self.budget is not None:
+            self.budget.reserve()
         # Reserve before attempting the call. Failures and invalid outputs still cost calls.
         self.calls += 1
         self.last_completion = None
         received = False
         started = time.perf_counter()
-        record = {"call_id": uuid.uuid4().hex, "event_id": event_id, "role": role, "model": self.backend.model_id,
+        record = {"call_id": uuid.uuid4().hex, "event_id": event_id, "role": role, "purpose": self.purpose, "model": self.backend.model_id,
                   "is_mock": self.backend.is_mock, "system": system, "payload": payload,
                   "max_output_tokens": self.max_output_tokens, "status": "error"}
         try:

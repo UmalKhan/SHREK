@@ -10,7 +10,7 @@ Under limited active-memory and update-testing budgets, does validating both new
 
 ## Current status
 
-Phases 1 and 2 software is implemented: configuration, call accounting, versioned SQLite memory, split auditing, paper-based baseline learning, local/HTTP model adapters, chronological runs, and a GPU handoff notebook. Offline fixtures and software tests are verified. Real-model execution and calibration on the group's GPU PC/Colab are pending. SHREK behavioral admission validation and periodic maintenance are not implemented yet. No research results or novelty claims have been established.
+Phases 1-3 software is implemented: the baseline, real-model adapters, admission validation, bounded replay, and tested revision/archival. Offline fixtures verify mechanics; real-model execution and calibration on the group's GPU PC/Colab are pending. No research results or novelty claims have been established. See [Phase 3](docs/phase3.md).
 
 Read [the detailed methodology](docs/methodology.md) before implementing the research components. See [the baseline notes](docs/baseline.md) for external sources and reproduction boundaries.
 
@@ -25,6 +25,7 @@ python -m venv .venv
 .\.venv\Scripts\python.exe -m shrek --version
 .\.venv\Scripts\python.exe -m shrek demo
 .\.venv\Scripts\python.exe -m shrek baseline-demo
+.\.venv\Scripts\python.exe -m shrek shrek-demo
 .\.venv\Scripts\python.exe -m pytest -q
 Copy-Item .env.example .env
 ```
@@ -69,7 +70,7 @@ Downloaded data, run artifacts, and credentials are ignored. Original literature
 - B2: baseline admission with behaviorally tested maintenance.
 - B3: validated admission with behaviorally tested maintenance.
 
-`configs/baseline_paper.toml` preserves the paper's per-label capacity design without the experimental global cap. Other configs describe controlled-budget experiments. Only B0 execution is implemented in Phase 2; B1/B2/B3 are rejected until SHREK components exist. Prompt/output/model differences are documented in [baseline fidelity notes](docs/baseline.md). Initial settings are development defaults, not experimentally validated values.
+`configs/baseline_paper.toml` preserves the paper's per-label capacity design without the experimental global cap. Other configs describe controlled-budget B0-B3 experiments, now supported through `run-system`. The legacy `run-baseline` command remains B0-only. Prompt/output/model differences are documented in [baseline fidelity notes](docs/baseline.md). Initial settings are development defaults, not experimentally validated values.
 
 ## Implementation order
 

@@ -92,6 +92,17 @@ class MemoryStore:
             raise
         return self.snapshot(version)
 
+    def resolve(self, change: Proposal, status: str, evidence: dict) -> None:
+        """Persist a rejection/deferral without activating any part of a candidate."""
+        if status not in {"rejected", "deferred"}:
+            raise ValueError("Only commit can accept a proposal")
+        cursor = self.connection.execute("UPDATE proposals SET status=?,decision=? WHERE change_id=? AND status='pending'",
+                                         (status, json.dumps(evidence, sort_keys=True), change.change_id))
+        if cursor.rowcount != 1:
+            self.connection.rollback()
+            raise ValueError("Proposal is missing or already decided")
+        self.connection.commit()
+
     def restore(self, historical_version: int, reason: str) -> Snapshot:
         """Explicit operator rollback, logged as a new version rather than rewriting history."""
         change = self.propose(self.snapshot(), "RESTORE", self.snapshot(historical_version).rules, reason)

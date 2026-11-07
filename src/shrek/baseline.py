@@ -2,15 +2,15 @@
 
 from dataclasses import dataclass
 from importlib.resources import files
+import hashlib
 import json
 import re
 from typing import Callable
-import uuid
 
 from shrek.config import ExperimentConfig
 from shrek.memory import MemoryStore
 from shrek.model_client import MeteredClient, ModelOutputError
-from shrek.schemas import Rule, RuntimeRequest, Snapshot, identifier, nonempty
+from shrek.schemas import Proposal, Rule, RuntimeRequest, Snapshot, identifier, nonempty
 
 
 def prompt(name: str) -> str:
@@ -42,6 +42,7 @@ class Feedback:
     score: int | None
     refused: bool | None
     rationale: str
+    legitimate_intent: bool | None = None
 
     @property
     def violation(self) -> bool:
@@ -50,8 +51,6 @@ class Feedback:
 
 class BaselineDefender:
     def __init__(self, client: MeteredClient, config: ExperimentConfig):
-        if config.admission_validation or config.maintenance_enabled:
-            raise ValueError("B1/B2/B3 require later SHREK phases; Phase 2 supports B0 only")
         self.client, self.config = client, config
 
     def respond(self, request: RuntimeRequest, snapshot: Snapshot) -> DefenseResult:
@@ -78,6 +77,10 @@ class BaselineDefender:
             policy = decision.get("policy")
             if not isinstance(policy, str) or policy not in {"ALLOW", "SOFT_REFUSE", "HARD_REFUSE"}:
                 raise ModelOutputError("Unknown response policy")
+            excluded_ids = checked_ids(decision.get("excluded_rule_ids", []), selected, len(selected))
+            if any(not rule.safe_exclusions for rule in selected if rule.rule_id in excluded_ids):
+                raise ModelOutputError("Policy may only exclude rules with explicit safe-exclusion conditions")
+            selected = tuple(rule for rule in selected if rule.rule_id not in excluded_ids)
             # Resolve stored action disagreements conservatively, as in the paper's priority order.
             order = {"ALLOW": 0, "SOFT_REFUSE": 1, "HARD_REFUSE": 2}
             policy = max([policy, *(rule.action for rule in selected)], key=order.get)
@@ -106,10 +109,16 @@ class BaselineDefender:
             rationale = nonempty(data["rationale"], "judge rationale", 2000)
         except ValueError as error:
             raise ModelOutputError(str(error)) from error
-        return Feedback(score, refused, rationale)
+        legitimate = data.get("legitimate_intent")
+        if legitimate is not None and type(legitimate) is not bool:
+            raise ModelOutputError("Legitimate intent must be boolean or null")
+        return Feedback(score, refused, rationale, legitimate)
 
     def learn(self, request: RuntimeRequest, result: DefenseResult, feedback: Feedback,
-              store: MemoryStore, token_counter: Callable[[str], int] | None = None) -> dict:
+              store: MemoryStore, token_counter: Callable[[str], int] | None = None,
+              admission: Callable[[Proposal, dict], dict] | None = None) -> dict:
+        if (self.config.admission_validation or self.config.maintenance_enabled) and admission is None:
+            raise ValueError("SHREK variants require an explicit admission controller")
         if not feedback.violation or result.attack_label == "benign":
             return {"status": "skipped", "reason": "No confirmed failure on a non-benign classified request"}
         if result.response_truncated:
@@ -129,7 +138,8 @@ class BaselineDefender:
             label = identifier(data.get("label"), "label")
             if result.attack_label != "other" and label != result.attack_label:
                 raise ValueError("Induction must preserve a known classified label")
-            rule = Rule("r-" + uuid.uuid4().hex, label, nonempty(data.get("pattern"), "pattern", 2000),
+            rule_id = "r-" + hashlib.sha256(f"{request.request_id}:{label}".encode()).hexdigest()[:16]
+            rule = Rule(rule_id, label, nonempty(data.get("pattern"), "pattern", 2000),
                         nonempty(data.get("text"), "text", 4000), data.get("action", "HARD_REFUSE"), (request.request_id,))
         except ValueError as error:
             raise ModelOutputError("Invalid induced rule") from error
@@ -167,6 +177,8 @@ class BaselineDefender:
         if evicted:
             operation = "REPLACE"
         proposal = store.propose(snapshot, operation, tuple(existing), "Baseline failure-driven rule update")
+        if admission is not None:
+            return admission(proposal, {"event_id": request.request_id, "rule_id": rule.rule_id, "evicted_rule_ids": sorted(evicted)})
         activated = store.commit(proposal, {"decision_source": "baseline_immediate_admission", "event_id": request.request_id,
                                             "evicted_rule_ids": sorted(evicted), "behavioral_validation": False})
         return {"status": "accepted", "change_id": proposal.change_id, "rule_id": rule.rule_id,

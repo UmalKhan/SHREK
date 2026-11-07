@@ -40,3 +40,7 @@ Declared implementation choices/differences:
 - Online judge feedback is not independent evaluation. Model ID/revision, prompts, data, decoding, and environment must be recorded for comparisons. The same local model initially serves host and learning roles, so correlated mistakes remain a limitation.
 
 Software integrity tests establish control flow, not baseline score fidelity. Benign real-model smoke integration and attack/judge calibration remain required on the GPU machine.
+
+## Phase 3 shared inference extension
+
+All `run-system` variants use the same policy prompt supporting explicitly stored safe-exclusion conditions. The policy can mark a nominated rule inapplicable only if that rule actually contains an exclusion. This is an inference adaptation, not a claim about the original baseline. Induced baseline rules initially have no exclusions; tested maintenance revisions may add them. Rule IDs are now deterministic hashes of source event ID and learned label, avoiding random-ID differences between otherwise identical variant prompts. The new resource-controlled runner applies the same four-eligible-admission-attempt ceiling to B0-B3; the legacy Phase 2 baseline command does not impose that extra ceiling.
