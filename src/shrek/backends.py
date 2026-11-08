@@ -57,7 +57,8 @@ class TransformersBackend:
     """One local frozen model, greedy decoding, no silent prompt truncation."""
     is_mock = False
 
-    def __init__(self, model_id: str, revision: str = "main", device: str = "auto", context_limit: int = 4096, seed: int = 17):
+    def __init__(self, model_id: str, revision: str = "main", device: str = "auto", context_limit: int = 4096, seed: int = 17,
+                 load_in_4bit: bool = False):
         if context_limit < 128 or device not in {"auto", "cpu", "cuda"}:
             raise ValueError("Invalid local model settings")
         try:
@@ -71,12 +72,26 @@ class TransformersBackend:
         self.model_id, self.revision = model_id, revision
         self.device = "cuda" if device == "auto" and torch.cuda.is_available() else ("cpu" if device == "auto" else device)
         self.context_limit, self.seed = context_limit, seed
+        self.load_in_4bit = load_in_4bit
+        if load_in_4bit and self.device != "cuda":
+            raise RuntimeError("4-bit loading requires a CUDA device")
         torch.manual_seed(seed)
         self.tokenizer = AutoTokenizer.from_pretrained(model_id, revision=revision, trust_remote_code=False)
+        extra = {}
+        if load_in_4bit:
+            try:
+                from transformers import BitsAndBytesConfig
+                import bitsandbytes  # noqa: F401
+            except ImportError as error:
+                raise RuntimeError("4-bit loading needs bitsandbytes: pip install bitsandbytes") from error
+            # NF4 weights with FP16 compute (Turing GPUs such as the RTX 20 series lack fast bfloat16).
+            extra["quantization_config"] = BitsAndBytesConfig(load_in_4bit=True, bnb_4bit_quant_type="nf4",
+                                                              bnb_4bit_compute_dtype=torch.float16,
+                                                              bnb_4bit_use_double_quant=True)
         self.model = AutoModelForCausalLM.from_pretrained(
             model_id, revision=revision, trust_remote_code=False,
             torch_dtype=torch.float16 if self.device == "cuda" else torch.float32,
-            device_map=self.device,
+            device_map=self.device, **extra,
         )
         self.model.eval()
         self.model.requires_grad_(False)
@@ -86,7 +101,8 @@ class TransformersBackend:
     def metadata(self) -> dict:
         return {"backend": "transformers", "model": self.model_id, "requested_revision": self.revision,
                 "resolved_revision": self.resolved_revision, "device": self.device, "seed": self.seed,
-                "context_limit": self.context_limit, "do_sample": False, "weights_frozen": True}
+                "context_limit": self.context_limit, "do_sample": False, "weights_frozen": True,
+                "quantization": "bnb-nf4-4bit-fp16-compute" if self.load_in_4bit else "none-fp16"}
 
     def count_tokens(self, text: str) -> int:
         return len(self.tokenizer.encode(text, add_special_tokens=False))

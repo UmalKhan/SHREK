@@ -37,6 +37,17 @@ class DefenseResult:
     response_truncated: bool = False
 
 
+# Function words carry no evidence of a shared attack method; lexical fallback matches content words only.
+STOPWORDS = frozenset("""a an the and or but if of to in on at by for from with as is are was were be been being it its
+this that these those there here i you he she we they me my your our their his her them us do does did done how what
+why when where which who whom can could should would will may might must not no nor so than then too very just about
+into over under up down out any all some such only own same other more most also via per""".split())
+
+
+def content_words(text: str) -> set[str]:
+    return {word for word in re.findall(r"\w+", text.casefold()) if len(word) > 2 and word not in STOPWORDS}
+
+
 @dataclass(frozen=True)
 class Feedback:
     score: int | None
@@ -67,9 +78,9 @@ class BaselineDefender:
                     {**request.payload(), "rules": [rule.to_dict() for rule in snapshot.rules], "limit": self.config.retrieval_k}, event_id=request.request_id)
                 ids = checked_ids(relevance.get("rule_ids"), snapshot.rules, self.config.retrieval_k)
                 if not ids:
-                    words = set(re.findall(r"\w+", request.text.casefold()))
-                    ranked = sorted(snapshot.rules, key=lambda rule: len(words & set(re.findall(r"\w+", rule.pattern.casefold()))), reverse=True)
-                    ids = [rule.rule_id for rule in ranked if words & set(re.findall(r"\w+", rule.pattern.casefold()))][:self.config.retrieval_k]
+                    words = content_words(request.text)
+                    ranked = sorted(snapshot.rules, key=lambda rule: len(words & content_words(rule.pattern)), reverse=True)
+                    ids = [rule.rule_id for rule in ranked if words & content_words(rule.pattern)][:self.config.retrieval_k]
                 selected = tuple(next(rule for rule in snapshot.rules if rule.rule_id == item) for item in ids)
         policy = "ALLOW"
         if selected:

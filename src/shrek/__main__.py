@@ -37,6 +37,7 @@ def main() -> None:
     system.add_argument("--device", choices=["auto", "cpu", "cuda"], default="auto")
     system.add_argument("--revision", default="main")
     system.add_argument("--context-limit", type=int, default=4096)
+    system.add_argument("--load-in-4bit", action="store_true", help="Load the local model with 4-bit NF4 quantization (needs bitsandbytes)")
     system.add_argument("--seed", type=int, default=17)
     system.add_argument("--split", choices=["adaptation", "holdout"], default="adaptation")
     system.add_argument("--no-learning", action="store_true")
@@ -63,6 +64,7 @@ def main() -> None:
     compare.add_argument("--device", choices=["auto", "cpu", "cuda"], default="auto")
     compare.add_argument("--revision", default="main")
     compare.add_argument("--context-limit", type=int, default=4096)
+    compare.add_argument("--load-in-4bit", action="store_true", help="Load the local model with 4-bit NF4 quantization (needs bitsandbytes)")
     compare.add_argument("--seeds", type=int, nargs="+", default=[17])
     compare.add_argument("--noise-rate", type=float, default=0.0)
     compare.add_argument("--order", choices=["shuffle", "preserve"], default="shuffle")
@@ -82,6 +84,7 @@ def main() -> None:
     run.add_argument("--device", choices=["auto", "cpu", "cuda"], default="auto")
     run.add_argument("--revision", default="main")
     run.add_argument("--context-limit", type=int, default=4096)
+    run.add_argument("--load-in-4bit", action="store_true", help="Load the local model with 4-bit NF4 quantization (needs bitsandbytes)")
     run.add_argument("--seed", type=int, default=17)
     run.add_argument("--split", choices=["development", "adaptation", "holdout"], default="adaptation")
     run.add_argument("--limit", type=int, default=None)
@@ -159,7 +162,7 @@ def main() -> None:
         output = args.output or "runs/study-" + datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S%fZ")
         if Path(output).exists():
             parser.error("Choose a fresh study output directory")
-        backend = (TransformersBackend(args.model, args.revision, args.device, args.context_limit, args.seeds[0])
+        backend = (TransformersBackend(args.model, args.revision, args.device, args.context_limit, args.seeds[0], load_in_4bit=args.load_in_4bit)
                    if args.backend == "transformers" else CompatibleHTTPBackend(args.base_url, args.model, os.environ.get("MODEL_API_KEY")))
         report = run_study(examples, backend, config, output, seeds=tuple(args.seeds), max_calls=args.max_calls,
                            holdout_calls=args.holdout_calls, max_output_tokens=args.max_output_tokens,
@@ -200,7 +203,7 @@ def main() -> None:
         output = args.output or "runs/system-" + datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S%fZ")
         if Path(output).exists():
             parser.error("Choose a fresh output directory")
-        backend = (TransformersBackend(args.model, args.revision, args.device, args.context_limit, args.seed)
+        backend = (TransformersBackend(args.model, args.revision, args.device, args.context_limit, args.seed, load_in_4bit=args.load_in_4bit)
                    if args.backend == "transformers" else CompatibleHTTPBackend(args.base_url, args.model, os.environ.get("MODEL_API_KEY")))
         summary = run_system(selected, backend, config, output, anchors=anchors, learning=not args.no_learning,
                              max_calls=args.max_calls, max_output_tokens=args.max_output_tokens, initial_rules=initial,
@@ -245,7 +248,7 @@ def main() -> None:
         if Path(output).exists():
             parser.error("Output directory already exists; choose a fresh run directory")
         if args.backend == "transformers":
-            backend = TransformersBackend(args.model, args.revision, args.device, args.context_limit, args.seed)
+            backend = TransformersBackend(args.model, args.revision, args.device, args.context_limit, args.seed, load_in_4bit=args.load_in_4bit)
         else:
             backend = CompatibleHTTPBackend(args.base_url, args.model, os.environ.get("MODEL_API_KEY"))
         summary = run_baseline(selected, backend, config, output, learning=not args.no_learning,

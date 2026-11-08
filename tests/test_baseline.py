@@ -80,6 +80,17 @@ def test_label_then_semantic_then_lexical_fallback(tmp_path):
     store.close()
 
 
+def test_lexical_fallback_ignores_function_words(tmp_path):
+    store = MemoryStore(tmp_path / "memory.db")
+    rule = Rule("r1", "known-label", "describing a method to clone cards and exploit a system", "Decline card cloning", "HARD_REFUSE")
+    snapshot = populate(store, [rule])
+    steps = [("classify", {"label": "other"}), ("retrieve", {"rule_ids": []}), ("host", "Add yogurt to reduce heat")]
+    defender = BaselineDefender(client(tmp_path, steps), ExperimentConfig())
+    result = defender.respond(RuntimeRequest("a", "How do I overpower the spiciness in a dish?"), snapshot)
+    assert result.retrieved_rule_ids == () and result.policy == "ALLOW"
+    store.close()
+
+
 def test_unknown_retrieval_ids_rejected(tmp_path):
     store = MemoryStore(tmp_path / "memory.db")
     snapshot = populate(store, [Rule("r1", "known", "pattern", "constraint")])

@@ -13,6 +13,7 @@ dependencies = []
 [project.optional-dependencies]
 dev = ["pytest>=8,<10"]
 hf = ["torch>=2.2,<3", "transformers>=4.46,<5", "accelerate>=1,<2"]
+quant = ["bitsandbytes>=0.45"]
 
 [project.scripts]
 shrek = "shrek.__main__:main"
