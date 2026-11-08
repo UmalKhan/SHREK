@@ -1,0 +1,48 @@
+{
+  "frozen_on": "2026-11-08",
+  "base_commit": "a2be370a542f9fff9ec65e19c3c285a8677a6d02",
+  "local_changes_patch_sha256": "24383df762329077f3a04c4a52e615efcbcc18bd489673bbaec5ddf2181df1e8",
+  "model": "Qwen/Qwen2.5-7B-Instruct",
+  "revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+  "quantization": "bnb-nf4-4bit-fp16-compute",
+  "dataset": "data/prepared-pilot/study-reviewed.jsonl",
+  "dataset_sha256": "e37f0500810598a98d73975f59ac2959536fea28f2e04b95e9e4337472b5b2a7",
+  "original_dataset_sha256": "668e9fd4818596a02faa3a6666d54838cbb51d46a582adbe35aba76ab772f78d",
+  "config": "configs/combined.toml",
+  "config_sha256": "db42c28a6beb131a67d2301e81aa93ad6a466b2ff9fa649b5d0e735921ce6548",
+  "prompt_sha256": {
+    "classify.txt": "7126385059ebefeb6d97ccafe9f911215c7277b4c43b4e4907a32384cde8b5cc",
+    "deduplicate.txt": "eb71d7890ad6d44160266c3ca0c11f335ba0b1b8ad8e13597f0062b2fb8db352",
+    "hard_refusal.txt": "9223a512f4c0856b7ac344eddcbaa81ac712d14554d42f704b3a62ce582b0ddb",
+    "host.txt": "8f9e956951087816a5adbe6ba8f5557f47f97bddc350e313ad39a03c3501941b",
+    "induce.txt": "74bd8628088bbef09aec8c037d1063134f57b150e225fceb46e956809b5f94ea",
+    "judge.txt": "f667923df4c15a467b4daa3d3d4d0c235c212b5609e60406dc6ece6b07b85515",
+    "maintenance.txt": "822608134df5a5e9324ea0ed61269c360f48f3ff7af8fc9aa7fa0660943da73e",
+    "policy.txt": "7f14d3c4301c1dcbfe9f40c7440e72ba70783275d110fc40a37a6b783c3a4100",
+    "retrieve.txt": "839a3a9bca1f94f30a2e82052a239202b2eba98a080bc62d419a27ef55e32400",
+    "validate_outcome.txt": "1fb7bd2b1c78086db11313713fada6fe2386b65ef2202ebe270227e73c70882b"
+  },
+  "limits": {
+    "context_limit": 4096,
+    "max_output_tokens": 768,
+    "max_calls": 2000,
+    "holdout_calls": 500
+  },
+  "seeds": [
+    17
+  ],
+  "order": "shuffle (compare default, seeded)",
+  "noise_rate": 0,
+  "hardware": {
+    "gpu": "NVIDIA GeForce RTX 2080",
+    "vram_gb": 8.0,
+    "system_ram_gb": 16
+  },
+  "python": "3.12.10",
+  "torch": "2.14.1+cu126",
+  "transformers": "4.57.6",
+  "os": "Windows-11-10.0.26200-SP0",
+  "planned_comparisons": "B1 vs B0 (admission testing), B2 vs B0 (maintenance), B3 vs B1 and B2; security, legitimate-task performance and cost together",
+  "selection_rule": "settings chosen on development data only; no holdout or adaptation output inspected before freezing",
+  "command": "python -m shrek compare data/prepared-pilot/study-reviewed.jsonl --backend transformers --model Qwen/Qwen2.5-7B-Instruct --revision a09a35458c702b33eeacc393d103063234e8bc28 --load-in-4bit --device cuda --context-limit 4096 --max-output-tokens 768 --config configs/combined.toml --seeds 17 --noise-rate 0 --max-calls 2000 --holdout-calls 500 --output runs/pilot-clean"
+}

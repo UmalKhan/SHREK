@@ -6,6 +6,7 @@ import hashlib
 import json
 from pathlib import Path
 import random
+import shutil
 
 from shrek.config import ExperimentConfig
 from shrek.data import Example, audit_splits
@@ -30,8 +31,42 @@ def read_jsonl(path):
     return [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line.strip()] if path.exists() else []
 
 
+def reuse_variant(source: Path, run_dir: Path, backend, config, seed, noise_rate, max_calls, holdout_calls,
+                  max_output_tokens, adaptation, partitions):
+    """Copy one completed variant from an earlier invocation after verifying it ran under identical settings.
+
+    Valid because each variant depends only on the seed (order, seed reset, greedy decoding) and not on the
+    other variants. Incomplete or mismatched runs are refused rather than silently mixed.
+    """
+    expected_backend = backend.metadata() if hasattr(backend, "metadata") else {"model": backend.model_id}
+    summaries = []
+    for stage, examples, calls, learning in (("adaptation", adaptation, max_calls, True),
+                                              ("holdout", partitions["holdout"], holdout_calls, False)):
+        manifest = json.loads((source / stage / "manifest.json").read_text(encoding="utf-8"))
+        summary = json.loads((source / stage / "summary.json").read_text(encoding="utf-8"))
+        checks = {"config_sha256": config.digest, "seed": seed, "learning": learning, "max_total_calls": calls,
+                  "max_output_tokens": max_output_tokens, "dataset_sha256": dataset_digest(examples),
+                  "anchors_sha256": dataset_digest(partitions["development"]),
+                  "ordered_example_ids": [item.request_id for item in examples]}
+        if learning:
+            checks["noise_rate"] = noise_rate
+        mismatched = sorted(name for name, value in checks.items() if manifest.get(name) != value)
+        if json.dumps(manifest.get("backend"), sort_keys=True) != json.dumps(expected_backend, sort_keys=True):
+            mismatched.append("backend")
+        if mismatched:
+            raise ValueError(f"Cannot reuse {source}/{stage}: mismatched {mismatched}")
+        if summary.get("unanswered") or summary.get("events_with_errors") or summary.get("budget_exhausted"):
+            raise ValueError(f"Cannot reuse {source}/{stage}: run was incomplete or had errors")
+        summaries.append(summary)
+    learned = hashlib.sha256((source / "adaptation/final_memory.json").read_bytes()).hexdigest()
+    shutil.copytree(source, run_dir)
+    (run_dir / "REUSED_FROM.txt").write_text(f"{source}\nadaptation final_memory.json sha256 {learned}\n", encoding="utf-8")
+    return summaries[0], summaries[1]
+
+
 def run_study(examples: list[Example], backend, template: ExperimentConfig, output, *, seeds=(17,),
-              max_calls=2000, holdout_calls=500, max_output_tokens=384, noise_rate=0.0, order="shuffle", progress=None) -> dict:
+              max_calls=2000, holdout_calls=500, max_output_tokens=384, noise_rate=0.0, order="shuffle", progress=None,
+              reuse=None) -> dict:
     if not seeds or len(set(seeds)) != len(seeds) or any(type(seed) is not int for seed in seeds):
         raise ValueError("Provide distinct integer seeds")
     if order not in {"shuffle", "preserve"} or not 0 <= noise_rate <= 1:
@@ -49,6 +84,9 @@ def run_study(examples: list[Example], backend, template: ExperimentConfig, outp
             raise ValueError(f"{split} needs at least {minimum} examples of each class")
     if template.capacity_mode == "controlled" and not callable(getattr(backend, "count_tokens", None)):
         raise ValueError("Controlled study requires the actual host tokenizer")
+    reuse = dict(reuse or {})
+    if not set(reuse) <= set(FLAGS):
+        raise ValueError("Reusable variants must be among B0-B3")
     output = Path(output)
     output.mkdir(parents=True, exist_ok=False)
     environment = environment_manifest()
@@ -60,7 +98,8 @@ def run_study(examples: list[Example], backend, template: ExperimentConfig, outp
             "max_output_tokens": max_output_tokens, "environment": environment,
             "variant_flags": {name: {"admission_validation": flags[0], "maintenance_enabled": flags[1]} for name, flags in FLAGS.items()},
             "stage_note": "Holdout uses the final memory of the matching variant/seed; no feedback, noise, validation, or maintenance occurs in holdout.",
-            "budget_note": "Identical stage ceilings, not a claim of identical consumed compute. Report actual call/token usage."}
+            "budget_note": "Identical stage ceilings, not a claim of identical consumed compute. Report actual call/token usage.",
+            "reused_variants": {name: str(path) for name, path in reuse.items()}}
     (output / "study_plan.json").write_text(json.dumps(plan, indent=2), encoding="utf-8")
     (output / "study_input.jsonl").write_text("".join(json.dumps(asdict(item), ensure_ascii=False) + "\n" for item in examples), encoding="utf-8")
     runs, key, queue = [], {}, []
@@ -77,11 +116,15 @@ def run_study(examples: list[Example], backend, template: ExperimentConfig, outp
             run_dir = output / f"seed-{seed}" / variant
             adapt_progress = (lambda state: progress({"seed": seed, "variant": variant, "stage": "adaptation", **state})) if progress else None
             hold_progress = (lambda state: progress({"seed": seed, "variant": variant, "stage": "holdout", **state})) if progress else None
-            adaptation_summary = run_system(adaptation, backend, config, run_dir / "adaptation", anchors=partitions["development"],
-                max_calls=max_calls, max_output_tokens=max_output_tokens, noise_rate=noise_rate, seed=seed, progress=adapt_progress)
-            learned = tuple(Rule.from_dict(item) for item in json.loads((run_dir / "adaptation/final_memory.json").read_text(encoding="utf-8")))
-            holdout_summary = run_system(partitions["holdout"], backend, config, run_dir / "holdout", anchors=partitions["development"],
-                learning=False, max_calls=holdout_calls, max_output_tokens=max_output_tokens, initial_rules=learned, seed=seed, progress=hold_progress)
+            if variant in reuse:
+                adaptation_summary, holdout_summary = reuse_variant(Path(reuse[variant]) / f"seed-{seed}" / variant, run_dir, backend,
+                    config, seed, noise_rate, max_calls, holdout_calls, max_output_tokens, adaptation, partitions)
+            else:
+                adaptation_summary = run_system(adaptation, backend, config, run_dir / "adaptation", anchors=partitions["development"],
+                    max_calls=max_calls, max_output_tokens=max_output_tokens, noise_rate=noise_rate, seed=seed, progress=adapt_progress)
+                learned = tuple(Rule.from_dict(item) for item in json.loads((run_dir / "adaptation/final_memory.json").read_text(encoding="utf-8")))
+                holdout_summary = run_system(partitions["holdout"], backend, config, run_dir / "holdout", anchors=partitions["development"],
+                    learning=False, max_calls=holdout_calls, max_output_tokens=max_output_tokens, initial_rules=learned, seed=seed, progress=hold_progress)
             job = {"seed": seed, "variant": variant, "adaptation": adaptation_summary, "holdout": holdout_summary,
                    "asr": None, "false_refusal_rate": None, "benign_task_success": None,
                    "scoring_status": "awaiting independent holdout review"}

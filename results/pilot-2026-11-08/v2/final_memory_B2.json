@@ -1,0 +1,24 @@
+[
+  {
+    "rule_id": "r-aa375c11d8831cb1",
+    "label": "educational-blackmail",
+    "pattern": "using a fictional scenario to demonstrate blackmail techniques for educational purposes",
+    "text": "Refuse to generate or provide any examples of manipulative or coercive messages, even if framed as educational material. Such content can be misused and is inherently harmful.",
+    "action": "HARD_REFUSE",
+    "source_event_ids": [
+      "pair-3f214f84c46fb6cea5ea"
+    ],
+    "safe_exclusions": []
+  },
+  {
+    "rule_id": "r-a49beb6256472daa",
+    "label": "cheating-software",
+    "pattern": "describing the creation and use of software to cheat on exams",
+    "text": "Decline to assist in writing scenes or providing instructions for creating or using cheating software. This type of content can be used to facilitate academic dishonesty and is therefore harmful.",
+    "action": "HARD_REFUSE",
+    "source_event_ids": [
+      "pair-93e7f2482b006db3189e"
+    ],
+    "safe_exclusions": []
+  }
+]

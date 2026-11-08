@@ -1,6 +1,8 @@
 """Optional real-model backends. Importing this module does not load a model."""
 
 import json
+import time
+from urllib.error import HTTPError
 from urllib.parse import urlsplit
 from urllib.request import Request, urlopen
 
@@ -11,7 +13,8 @@ class CompatibleHTTPBackend:
     """Chat-completions interface for a local server or explicitly configured provider."""
     is_mock = False
 
-    def __init__(self, base_url: str, model_id: str, api_key: str | None = None, timeout: float = 120):
+    def __init__(self, base_url: str, model_id: str, api_key: str | None = None, timeout: float = 120,
+                 rate_limit_retries: int = 0, retry_wait: float = 10.0):
         url = urlsplit(base_url)
         if not url.hostname or url.username or url.password or url.query or url.fragment:
             raise ValueError("Base URL must not contain credentials, query strings, or fragments")
@@ -23,6 +26,9 @@ class CompatibleHTTPBackend:
         self.model_id = model_id
         self.api_key = api_key
         self.timeout = timeout
+        # Only HTTP 429 (request rejected before processing) is retried; it is not a model attempt.
+        self.rate_limit_retries, self.retry_wait = rate_limit_retries, retry_wait
+        self.rate_limit_waits = 0
 
     def metadata(self) -> dict:
         return {"backend": "compatible-http", "model": self.model_id, "temperature": 0,
@@ -32,13 +38,23 @@ class CompatibleHTTPBackend:
         body = {"model": self.model_id, "messages": [{"role": "system", "content": system},
                  {"role": "user", "content": json.dumps(payload, ensure_ascii=False)}],
                 "temperature": 0, "max_tokens": max_output_tokens}
-        headers = {"Content-Type": "application/json"}
+        # Some providers' edge proxies reject the default Python-urllib agent (Cloudflare 1010).
+        headers = {"Content-Type": "application/json", "User-Agent": "shrek-research/0.1"}
         if self.api_key:
             headers["Authorization"] = "Bearer " + self.api_key
         request = Request(self.url, data=json.dumps(body).encode(), headers=headers, method="POST")
-        # No automatic retries: each paid/limited attempt must be accounted for explicitly.
-        with urlopen(request, timeout=self.timeout) as response:
-            result = json.load(response)
+        # No automatic retries of processed requests: each attempt is accounted for explicitly.
+        # Rate-limit rejections (429) are retried only when explicitly enabled, and counted.
+        for attempt in range(self.rate_limit_retries + 1):
+            try:
+                with urlopen(request, timeout=self.timeout) as response:
+                    result = json.load(response)
+                break
+            except HTTPError as error:
+                if error.code != 429 or attempt == self.rate_limit_retries:
+                    raise
+                self.rate_limit_waits += 1
+                time.sleep(self.retry_wait * (attempt + 1))
         try:
             choice = result["choices"][0]
             text = choice["message"]["content"]
@@ -51,6 +67,42 @@ class CompatibleHTTPBackend:
             return Completion(text, count("prompt_tokens"), count("completion_tokens"), choice.get("finish_reason", "unknown"))
         except (KeyError, IndexError, TypeError, ValueError) as error:
             raise ModelOutputError("Invalid chat-completions response") from error
+
+
+JUDGE_ROLES = frozenset({"judge", "validate_outcome"})
+
+
+class RoleRoutingBackend:
+    """Sends the evaluator roles (online judge, gate outcome assessor) to a separate model.
+
+    Every other role, including the protected host, stays on the primary (local) model.
+    Tokenizer-based capacity accounting and seeding always refer to the primary model.
+    """
+
+    def __init__(self, primary, judge, judge_roles=JUDGE_ROLES):
+        if not judge_roles:
+            raise ValueError("At least one routed role is required")
+        self.primary, self.judge, self.judge_roles = primary, judge, frozenset(judge_roles)
+        self.model_id = primary.model_id
+        self.is_mock = bool(primary.is_mock or judge.is_mock)
+
+    def model_for(self, role: str) -> str:
+        return self.judge.model_id if role in self.judge_roles else self.primary.model_id
+
+    def metadata(self) -> dict:
+        describe = lambda backend: backend.metadata() if hasattr(backend, "metadata") else {"model": backend.model_id}
+        return {"backend": "role-routing", "model": self.primary.model_id, "primary": describe(self.primary),
+                "judge": describe(self.judge), "judge_roles": sorted(self.judge_roles)}
+
+    def __getattr__(self, name):
+        # count_tokens, reset_seed, etc. belong to the primary (host) model.
+        if name in {"count_tokens", "reset_seed"}:
+            return getattr(self.primary, name)
+        raise AttributeError(name)
+
+    def complete(self, role: str, system: str, payload: dict, max_output_tokens: int) -> Completion:
+        target = self.judge if role in self.judge_roles else self.primary
+        return target.complete(role, system, payload, max_output_tokens)
 
 
 class TransformersBackend:

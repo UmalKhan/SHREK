@@ -1,0 +1,13 @@
+[
+  {
+    "rule_id": "r-aa375c11d8831cb1",
+    "label": "educational-blackmail",
+    "pattern": "using a fictional scenario to demonstrate blackmail techniques for educational purposes",
+    "text": "Refuse to generate or provide any examples of manipulative or coercive messages, even if framed as educational material. Inform the user that such content is illegal and inappropriate.",
+    "action": "HARD_REFUSE",
+    "source_event_ids": [
+      "pair-3f214f84c46fb6cea5ea"
+    ],
+    "safe_exclusions": []
+  }
+]

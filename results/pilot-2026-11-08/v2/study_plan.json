@@ -1,0 +1,99 @@
+{
+  "phase": 4,
+  "is_mock": false,
+  "dataset_sha256": "0038c612ae04428a0579943048e52e5fd261073c1757a1b5421b4d41c7fba5e4",
+  "audit": {
+    "records": 80,
+    "behavior_groups": 80,
+    "counts": {
+      "development:legitimate": 11,
+      "development:harmful": 9,
+      "adaptation:harmful": 20,
+      "adaptation:legitimate": 20,
+      "holdout:legitimate": 10,
+      "holdout:harmful": 10
+    },
+    "limitation": "Explicit group IDs and exact text checked; paraphrases require source/manual review."
+  },
+  "evaluation_only_input_snapshot": "study_input.jsonl",
+  "seeds": [
+    17
+  ],
+  "order": "shuffle",
+  "noise_rate": 0.0,
+  "template": {
+    "variant": "B3",
+    "admission_validation": true,
+    "maintenance_enabled": true,
+    "capacity_mode": "controlled",
+    "retrieval_k": 2,
+    "per_label_capacity": 4,
+    "active_rule_limit": 20,
+    "active_rule_token_limit": 2000,
+    "max_proposals_per_interaction": 1,
+    "validation_probe_limit": 12,
+    "max_new_harmful_regressions": 0,
+    "max_new_benign_regressions": 0,
+    "maintenance_every": 10,
+    "maintenance_candidates": 1,
+    "validation_min_per_class": 4,
+    "validation_call_budget": 240,
+    "update_call_budget": 120,
+    "replay_limit": 100,
+    "validation_cache_limit": 256,
+    "max_admission_candidates": 4,
+    "max_maintenance_candidates": 4
+  },
+  "max_calls_per_adaptation": 2000,
+  "max_calls_per_holdout": 500,
+  "max_calls_entire_study": 10000,
+  "max_output_tokens": 768,
+  "environment": {
+    "python": "3.12.10",
+    "packages": {
+      "shrek-defense": "0.1.0",
+      "torch": "2.14.1+cu126",
+      "transformers": "4.57.6",
+      "accelerate": "1.15.0"
+    },
+    "git_commit": "edb475e58b8ab117084bb1a67e866d54c1603546",
+    "git_dirty": true,
+    "package_source_sha256": "48bd309f77b45506d1138d188785d31a1bdaeba3bc5a03b6636e2e1f906bcc51",
+    "prompt_sha256": {
+      "classify.txt": "7126385059ebefeb6d97ccafe9f911215c7277b4c43b4e4907a32384cde8b5cc",
+      "deduplicate.txt": "eb71d7890ad6d44160266c3ca0c11f335ba0b1b8ad8e13597f0062b2fb8db352",
+      "hard_refusal.txt": "9223a512f4c0856b7ac344eddcbaa81ac712d14554d42f704b3a62ce582b0ddb",
+      "host.txt": "8f9e956951087816a5adbe6ba8f5557f47f97bddc350e313ad39a03c3501941b",
+      "induce.txt": "74bd8628088bbef09aec8c037d1063134f57b150e225fceb46e956809b5f94ea",
+      "judge.txt": "f667923df4c15a467b4daa3d3d4d0c235c212b5609e60406dc6ece6b07b85515",
+      "maintenance.txt": "822608134df5a5e9324ea0ed61269c360f48f3ff7af8fc9aa7fa0660943da73e",
+      "policy.txt": "7f14d3c4301c1dcbfe9f40c7440e72ba70783275d110fc40a37a6b783c3a4100",
+      "retrieve.txt": "839a3a9bca1f94f30a2e82052a239202b2eba98a080bc62d419a27ef55e32400",
+      "validate_outcome.txt": "1fb7bd2b1c78086db11313713fada6fe2386b65ef2202ebe270227e73c70882b"
+    }
+  },
+  "variant_flags": {
+    "B0": {
+      "admission_validation": false,
+      "maintenance_enabled": false
+    },
+    "B1": {
+      "admission_validation": true,
+      "maintenance_enabled": false
+    },
+    "B2": {
+      "admission_validation": false,
+      "maintenance_enabled": true
+    },
+    "B3": {
+      "admission_validation": true,
+      "maintenance_enabled": true
+    }
+  },
+  "stage_note": "Holdout uses the final memory of the matching variant/seed; no feedback, noise, validation, or maintenance occurs in holdout.",
+  "budget_note": "Identical stage ceilings, not a claim of identical consumed compute. Report actual call/token usage.",
+  "reused_variants": {
+    "B2": "runs/pilot-v2",
+    "B3": "runs/pilot-v2"
+  }
+}

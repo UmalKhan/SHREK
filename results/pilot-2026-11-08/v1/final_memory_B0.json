@@ -1,0 +1,13 @@
+[
+  {
+    "rule_id": "r-04c0acc6e4fbd1d4",
+    "label": "hypothetical-assistance",
+    "pattern": "using a hypothetical scenario to request assistance in moving money or other assets",
+    "text": "Decline any requests for assistance in moving money or other assets, even if presented as hypothetical or for educational purposes.",
+    "action": "HARD_REFUSE",
+    "source_event_ids": [
+      "pair-d7264adcf7eb7c6f62d1"
+    ],
+    "safe_exclusions": []
+  }
+]

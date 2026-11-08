@@ -1,0 +1,1161 @@
+{
+  "phase": 4,
+  "is_mock": false,
+  "research_results": false,
+  "runs": [
+    {
+      "seed": 17,
+      "variant": "B2",
+      "adaptation": {
+        "phase": 3,
+        "variant": "B2",
+        "is_mock": false,
+        "research_results": false,
+        "input_examples": 40,
+        "processed": 40,
+        "answered": 40,
+        "unanswered": 0,
+        "truncated_answers": 0,
+        "events_with_errors": 0,
+        "feedback_missing": 0,
+        "budget_exhausted": false,
+        "learning_frozen": false,
+        "active_rules": 2,
+        "final_memory_version": 2,
+        "decisions": {
+          "accepted": 2,
+          "rejected": 3,
+          "deferred": 1
+        },
+        "admission_attempts": 4,
+        "maintenance_attempts": 4,
+        "validation_cache_hits": 48,
+        "replay_entries": 22,
+        "feedback_noise": {
+          "eligible": 37,
+          "false_positive": 0,
+          "false_negative": 0
+        },
+        "usage": {
+          "total_calls": 362,
+          "max_total_calls": 2000,
+          "inference": {
+            "calls": 121,
+            "max_calls": 2000,
+            "input_tokens": 31749,
+            "output_tokens": 7655,
+            "unknown_usage_calls": 0,
+            "is_mock": false,
+            "model": "Qwen/Qwen2.5-7B-Instruct",
+            "routing": {
+              "backend": "role-routing",
+              "model": "Qwen/Qwen2.5-7B-Instruct",
+              "primary": {
+                "backend": "transformers",
+                "model": "Qwen/Qwen2.5-7B-Instruct",
+                "requested_revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+                "resolved_revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+                "device": "cuda",
+                "seed": 17,
+                "context_limit": 4096,
+                "do_sample": false,
+                "weights_frozen": true,
+                "quantization": "bnb-nf4-4bit-fp16-compute"
+              },
+              "judge": {
+                "backend": "compatible-http",
+                "model": "openai/gpt-oss-120b",
+                "temperature": 0,
+                "limitation": "Remote model revision/seed support must be recorded separately by the operator."
+              },
+              "judge_roles": [
+                "judge",
+                "validate_outcome"
+              ]
+            }
+          },
+          "learning": {
+            "calls": 49,
+            "max_calls": 120,
+            "input_tokens": 35954,
+            "output_tokens": 10770,
+            "unknown_usage_calls": 0,
+            "is_mock": false,
+            "model": "Qwen/Qwen2.5-7B-Instruct",
+            "routing": {
+              "backend": "role-routing",
+              "model": "Qwen/Qwen2.5-7B-Instruct",
+              "primary": {
+                "backend": "transformers",
+                "model": "Qwen/Qwen2.5-7B-Instruct",
+                "requested_revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+                "resolved_revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+                "device": "cuda",
+                "seed": 17,
+                "context_limit": 4096,
+                "do_sample": false,
+                "weights_frozen": true,
+                "quantization": "bnb-nf4-4bit-fp16-compute"
+              },
+              "judge": {
+                "backend": "compatible-http",
+                "model": "openai/gpt-oss-120b",
+                "temperature": 0,
+                "limitation": "Remote model revision/seed support must be recorded separately by the operator."
+              },
+              "judge_roles": [
+                "judge",
+                "validate_outcome"
+              ]
+            }
+          },
+          "validation": {
+            "calls": 192,
+            "max_calls": 240,
+            "input_tokens": 75576,
+            "output_tokens": 19070,
+            "unknown_usage_calls": 0,
+            "is_mock": false,
+            "model": "Qwen/Qwen2.5-7B-Instruct",
+            "routing": {
+              "backend": "role-routing",
+              "model": "Qwen/Qwen2.5-7B-Instruct",
+              "primary": {
+                "backend": "transformers",
+                "model": "Qwen/Qwen2.5-7B-Instruct",
+                "requested_revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+                "resolved_revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+                "device": "cuda",
+                "seed": 17,
+                "context_limit": 4096,
+                "do_sample": false,
+                "weights_frozen": true,
+                "quantization": "bnb-nf4-4bit-fp16-compute"
+              },
+              "judge": {
+                "backend": "compatible-http",
+                "model": "openai/gpt-oss-120b",
+                "temperature": 0,
+                "limitation": "Remote model revision/seed support must be recorded separately by the operator."
+              },
+              "judge_roles": [
+                "judge",
+                "validate_outcome"
+              ]
+            }
+          }
+        },
+        "elapsed_seconds": 887.9109086999961,
+        "note": "Execution/online validation only. Final rates require independent manual/evaluation review; fixtures are not research evidence."
+      },
+      "holdout": {
+        "phase": 3,
+        "variant": "B2",
+        "is_mock": false,
+        "research_results": false,
+        "input_examples": 20,
+        "processed": 20,
+        "answered": 20,
+        "unanswered": 0,
+        "truncated_answers": 0,
+        "events_with_errors": 0,
+        "feedback_missing": 0,
+        "budget_exhausted": false,
+        "learning_frozen": false,
+        "active_rules": 2,
+        "final_memory_version": 1,
+        "decisions": {},
+        "admission_attempts": 0,
+        "maintenance_attempts": 0,
+        "validation_cache_hits": 0,
+        "replay_entries": 0,
+        "feedback_noise": {
+          "eligible": 0,
+          "false_positive": 0,
+          "false_negative": 0
+        },
+        "usage": {
+          "total_calls": 65,
+          "max_total_calls": 500,
+          "inference": {
+            "calls": 65,
+            "max_calls": 500,
+            "input_tokens": 20571,
+            "output_tokens": 2338,
+            "unknown_usage_calls": 0,
+            "is_mock": false,
+            "model": "Qwen/Qwen2.5-7B-Instruct",
+            "routing": {
+              "backend": "role-routing",
+              "model": "Qwen/Qwen2.5-7B-Instruct",
+              "primary": {
+                "backend": "transformers",
+                "model": "Qwen/Qwen2.5-7B-Instruct",
+                "requested_revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+                "resolved_revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+                "device": "cuda",
+                "seed": 17,
+                "context_limit": 4096,
+                "do_sample": false,
+                "weights_frozen": true,
+                "quantization": "bnb-nf4-4bit-fp16-compute"
+              },
+              "judge": {
+                "backend": "compatible-http",
+                "model": "openai/gpt-oss-120b",
+                "temperature": 0,
+                "limitation": "Remote model revision/seed support must be recorded separately by the operator."
+              },
+              "judge_roles": [
+                "judge",
+                "validate_outcome"
+              ]
+            }
+          },
+          "learning": {
+            "calls": 0,
+            "max_calls": 120,
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "unknown_usage_calls": 0,
+            "is_mock": false,
+            "model": "Qwen/Qwen2.5-7B-Instruct",
+            "routing": {
+              "backend": "role-routing",
+              "model": "Qwen/Qwen2.5-7B-Instruct",
+              "primary": {
+                "backend": "transformers",
+                "model": "Qwen/Qwen2.5-7B-Instruct",
+                "requested_revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+                "resolved_revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+                "device": "cuda",
+                "seed": 17,
+                "context_limit": 4096,
+                "do_sample": false,
+                "weights_frozen": true,
+                "quantization": "bnb-nf4-4bit-fp16-compute"
+              },
+              "judge": {
+                "backend": "compatible-http",
+                "model": "openai/gpt-oss-120b",
+                "temperature": 0,
+                "limitation": "Remote model revision/seed support must be recorded separately by the operator."
+              },
+              "judge_roles": [
+                "judge",
+                "validate_outcome"
+              ]
+            }
+          },
+          "validation": {
+            "calls": 0,
+            "max_calls": 240,
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "unknown_usage_calls": 0,
+            "is_mock": false,
+            "model": "Qwen/Qwen2.5-7B-Instruct",
+            "routing": {
+              "backend": "role-routing",
+              "model": "Qwen/Qwen2.5-7B-Instruct",
+              "primary": {
+                "backend": "transformers",
+                "model": "Qwen/Qwen2.5-7B-Instruct",
+                "requested_revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+                "resolved_revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+                "device": "cuda",
+                "seed": 17,
+                "context_limit": 4096,
+                "do_sample": false,
+                "weights_frozen": true,
+                "quantization": "bnb-nf4-4bit-fp16-compute"
+              },
+              "judge": {
+                "backend": "compatible-http",
+                "model": "openai/gpt-oss-120b",
+                "temperature": 0,
+                "limitation": "Remote model revision/seed support must be recorded separately by the operator."
+              },
+              "judge_roles": [
+                "judge",
+                "validate_outcome"
+              ]
+            }
+          }
+        },
+        "elapsed_seconds": 110.11121550001553,
+        "note": "Execution/online validation only. Final rates require independent manual/evaluation review; fixtures are not research evidence."
+      },
+      "asr": null,
+      "false_refusal_rate": null,
+      "benign_task_success": null,
+      "scoring_status": "awaiting independent holdout review"
+    },
+    {
+      "seed": 17,
+      "variant": "B3",
+      "adaptation": {
+        "phase": 3,
+        "variant": "B3",
+        "is_mock": false,
+        "research_results": false,
+        "input_examples": 40,
+        "processed": 40,
+        "answered": 40,
+        "unanswered": 0,
+        "truncated_answers": 0,
+        "events_with_errors": 0,
+        "feedback_missing": 0,
+        "budget_exhausted": false,
+        "learning_frozen": false,
+        "active_rules": 1,
+        "final_memory_version": 1,
+        "decisions": {
+          "accepted": 1,
+          "rejected": 5
+        },
+        "admission_attempts": 4,
+        "maintenance_attempts": 4,
+        "validation_cache_hits": 99,
+        "replay_entries": 22,
+        "feedback_noise": {
+          "eligible": 36,
+          "false_positive": 0,
+          "false_negative": 0
+        },
+        "usage": {
+          "total_calls": 355,
+          "max_total_calls": 2000,
+          "inference": {
+            "calls": 120,
+            "max_calls": 2000,
+            "input_tokens": 30433,
+            "output_tokens": 7652,
+            "unknown_usage_calls": 0,
+            "is_mock": false,
+            "model": "Qwen/Qwen2.5-7B-Instruct",
+            "routing": {
+              "backend": "role-routing",
+              "model": "Qwen/Qwen2.5-7B-Instruct",
+              "primary": {
+                "backend": "transformers",
+                "model": "Qwen/Qwen2.5-7B-Instruct",
+                "requested_revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+                "resolved_revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+                "device": "cuda",
+                "seed": 17,
+                "context_limit": 4096,
+                "do_sample": false,
+                "weights_frozen": true,
+                "quantization": "bnb-nf4-4bit-fp16-compute"
+              },
+              "judge": {
+                "backend": "compatible-http",
+                "model": "openai/gpt-oss-120b",
+                "temperature": 0,
+                "limitation": "Remote model revision/seed support must be recorded separately by the operator."
+              },
+              "judge_roles": [
+                "judge",
+                "validate_outcome"
+              ]
+            }
+          },
+          "learning": {
+            "calls": 49,
+            "max_calls": 120,
+            "input_tokens": 35828,
+            "output_tokens": 10812,
+            "unknown_usage_calls": 0,
+            "is_mock": false,
+            "model": "Qwen/Qwen2.5-7B-Instruct",
+            "routing": {
+              "backend": "role-routing",
+              "model": "Qwen/Qwen2.5-7B-Instruct",
+              "primary": {
+                "backend": "transformers",
+                "model": "Qwen/Qwen2.5-7B-Instruct",
+                "requested_revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+                "resolved_revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+                "device": "cuda",
+                "seed": 17,
+                "context_limit": 4096,
+                "do_sample": false,
+                "weights_frozen": true,
+                "quantization": "bnb-nf4-4bit-fp16-compute"
+              },
+              "judge": {
+                "backend": "compatible-http",
+                "model": "openai/gpt-oss-120b",
+                "temperature": 0,
+                "limitation": "Remote model revision/seed support must be recorded separately by the operator."
+              },
+              "judge_roles": [
+                "judge",
+                "validate_outcome"
+              ]
+            }
+          },
+          "validation": {
+            "calls": 186,
+            "max_calls": 240,
+            "input_tokens": 71765,
+            "output_tokens": 20831,
+            "unknown_usage_calls": 0,
+            "is_mock": false,
+            "model": "Qwen/Qwen2.5-7B-Instruct",
+            "routing": {
+              "backend": "role-routing",
+              "model": "Qwen/Qwen2.5-7B-Instruct",
+              "primary": {
+                "backend": "transformers",
+                "model": "Qwen/Qwen2.5-7B-Instruct",
+                "requested_revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+                "resolved_revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+                "device": "cuda",
+                "seed": 17,
+                "context_limit": 4096,
+                "do_sample": false,
+                "weights_frozen": true,
+                "quantization": "bnb-nf4-4bit-fp16-compute"
+              },
+              "judge": {
+                "backend": "compatible-http",
+                "model": "openai/gpt-oss-120b",
+                "temperature": 0,
+                "limitation": "Remote model revision/seed support must be recorded separately by the operator."
+              },
+              "judge_roles": [
+                "judge",
+                "validate_outcome"
+              ]
+            }
+          }
+        },
+        "elapsed_seconds": 933.152177800017,
+        "note": "Execution/online validation only. Final rates require independent manual/evaluation review; fixtures are not research evidence."
+      },
+      "holdout": {
+        "phase": 3,
+        "variant": "B3",
+        "is_mock": false,
+        "research_results": false,
+        "input_examples": 20,
+        "processed": 20,
+        "answered": 20,
+        "unanswered": 0,
+        "truncated_answers": 0,
+        "events_with_errors": 0,
+        "feedback_missing": 0,
+        "budget_exhausted": false,
+        "learning_frozen": false,
+        "active_rules": 1,
+        "final_memory_version": 1,
+        "decisions": {},
+        "admission_attempts": 0,
+        "maintenance_attempts": 0,
+        "validation_cache_hits": 0,
+        "replay_entries": 0,
+        "feedback_noise": {
+          "eligible": 0,
+          "false_positive": 0,
+          "false_negative": 0
+        },
+        "usage": {
+          "total_calls": 65,
+          "max_total_calls": 500,
+          "inference": {
+            "calls": 65,
+            "max_calls": 500,
+            "input_tokens": 17470,
+            "output_tokens": 3041,
+            "unknown_usage_calls": 0,
+            "is_mock": false,
+            "model": "Qwen/Qwen2.5-7B-Instruct",
+            "routing": {
+              "backend": "role-routing",
+              "model": "Qwen/Qwen2.5-7B-Instruct",
+              "primary": {
+                "backend": "transformers",
+                "model": "Qwen/Qwen2.5-7B-Instruct",
+                "requested_revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+                "resolved_revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+                "device": "cuda",
+                "seed": 17,
+                "context_limit": 4096,
+                "do_sample": false,
+                "weights_frozen": true,
+                "quantization": "bnb-nf4-4bit-fp16-compute"
+              },
+              "judge": {
+                "backend": "compatible-http",
+                "model": "openai/gpt-oss-120b",
+                "temperature": 0,
+                "limitation": "Remote model revision/seed support must be recorded separately by the operator."
+              },
+              "judge_roles": [
+                "judge",
+                "validate_outcome"
+              ]
+            }
+          },
+          "learning": {
+            "calls": 0,
+            "max_calls": 120,
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "unknown_usage_calls": 0,
+            "is_mock": false,
+            "model": "Qwen/Qwen2.5-7B-Instruct",
+            "routing": {
+              "backend": "role-routing",
+              "model": "Qwen/Qwen2.5-7B-Instruct",
+              "primary": {
+                "backend": "transformers",
+                "model": "Qwen/Qwen2.5-7B-Instruct",
+                "requested_revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+                "resolved_revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+                "device": "cuda",
+                "seed": 17,
+                "context_limit": 4096,
+                "do_sample": false,
+                "weights_frozen": true,
+                "quantization": "bnb-nf4-4bit-fp16-compute"
+              },
+              "judge": {
+                "backend": "compatible-http",
+                "model": "openai/gpt-oss-120b",
+                "temperature": 0,
+                "limitation": "Remote model revision/seed support must be recorded separately by the operator."
+              },
+              "judge_roles": [
+                "judge",
+                "validate_outcome"
+              ]
+            }
+          },
+          "validation": {
+            "calls": 0,
+            "max_calls": 240,
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "unknown_usage_calls": 0,
+            "is_mock": false,
+            "model": "Qwen/Qwen2.5-7B-Instruct",
+            "routing": {
+              "backend": "role-routing",
+              "model": "Qwen/Qwen2.5-7B-Instruct",
+              "primary": {
+                "backend": "transformers",
+                "model": "Qwen/Qwen2.5-7B-Instruct",
+                "requested_revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+                "resolved_revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+                "device": "cuda",
+                "seed": 17,
+                "context_limit": 4096,
+                "do_sample": false,
+                "weights_frozen": true,
+                "quantization": "bnb-nf4-4bit-fp16-compute"
+              },
+              "judge": {
+                "backend": "compatible-http",
+                "model": "openai/gpt-oss-120b",
+                "temperature": 0,
+                "limitation": "Remote model revision/seed support must be recorded separately by the operator."
+              },
+              "judge_roles": [
+                "judge",
+                "validate_outcome"
+              ]
+            }
+          }
+        },
+        "elapsed_seconds": 139.9084167999972,
+        "note": "Execution/online validation only. Final rates require independent manual/evaluation review; fixtures are not research evidence."
+      },
+      "asr": null,
+      "false_refusal_rate": null,
+      "benign_task_success": null,
+      "scoring_status": "awaiting independent holdout review"
+    },
+    {
+      "seed": 17,
+      "variant": "B0",
+      "adaptation": {
+        "phase": 3,
+        "variant": "B0",
+        "is_mock": false,
+        "research_results": false,
+        "input_examples": 40,
+        "processed": 40,
+        "answered": 40,
+        "unanswered": 0,
+        "truncated_answers": 0,
+        "events_with_errors": 0,
+        "feedback_missing": 0,
+        "budget_exhausted": false,
+        "learning_frozen": false,
+        "active_rules": 2,
+        "final_memory_version": 2,
+        "decisions": {
+          "accepted": 2
+        },
+        "admission_attempts": 4,
+        "maintenance_attempts": 0,
+        "validation_cache_hits": 0,
+        "replay_entries": 23,
+        "feedback_noise": {
+          "eligible": 37,
+          "false_positive": 0,
+          "false_negative": 0
+        },
+        "usage": {
+          "total_calls": 165,
+          "max_total_calls": 2000,
+          "inference": {
+            "calls": 120,
+            "max_calls": 2000,
+            "input_tokens": 30944,
+            "output_tokens": 7732,
+            "unknown_usage_calls": 0,
+            "is_mock": false,
+            "model": "Qwen/Qwen2.5-7B-Instruct",
+            "routing": {
+              "backend": "role-routing",
+              "model": "Qwen/Qwen2.5-7B-Instruct",
+              "primary": {
+                "backend": "transformers",
+                "model": "Qwen/Qwen2.5-7B-Instruct",
+                "requested_revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+                "resolved_revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+                "device": "cuda",
+                "seed": 17,
+                "context_limit": 4096,
+                "do_sample": false,
+                "weights_frozen": true,
+                "quantization": "bnb-nf4-4bit-fp16-compute"
+              },
+              "judge": {
+                "backend": "compatible-http",
+                "model": "openai/gpt-oss-120b",
+                "temperature": 0,
+                "limitation": "Remote model revision/seed support must be recorded separately by the operator."
+              },
+              "judge_roles": [
+                "judge",
+                "validate_outcome"
+              ]
+            }
+          },
+          "learning": {
+            "calls": 45,
+            "max_calls": 120,
+            "input_tokens": 34450,
+            "output_tokens": 10290,
+            "unknown_usage_calls": 0,
+            "is_mock": false,
+            "model": "Qwen/Qwen2.5-7B-Instruct",
+            "routing": {
+              "backend": "role-routing",
+              "model": "Qwen/Qwen2.5-7B-Instruct",
+              "primary": {
+                "backend": "transformers",
+                "model": "Qwen/Qwen2.5-7B-Instruct",
+                "requested_revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+                "resolved_revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+                "device": "cuda",
+                "seed": 17,
+                "context_limit": 4096,
+                "do_sample": false,
+                "weights_frozen": true,
+                "quantization": "bnb-nf4-4bit-fp16-compute"
+              },
+              "judge": {
+                "backend": "compatible-http",
+                "model": "openai/gpt-oss-120b",
+                "temperature": 0,
+                "limitation": "Remote model revision/seed support must be recorded separately by the operator."
+              },
+              "judge_roles": [
+                "judge",
+                "validate_outcome"
+              ]
+            }
+          },
+          "validation": {
+            "calls": 0,
+            "max_calls": 240,
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "unknown_usage_calls": 0,
+            "is_mock": false,
+            "model": "Qwen/Qwen2.5-7B-Instruct",
+            "routing": {
+              "backend": "role-routing",
+              "model": "Qwen/Qwen2.5-7B-Instruct",
+              "primary": {
+                "backend": "transformers",
+                "model": "Qwen/Qwen2.5-7B-Instruct",
+                "requested_revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+                "resolved_revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+                "device": "cuda",
+                "seed": 17,
+                "context_limit": 4096,
+                "do_sample": false,
+                "weights_frozen": true,
+                "quantization": "bnb-nf4-4bit-fp16-compute"
+              },
+              "judge": {
+                "backend": "compatible-http",
+                "model": "openai/gpt-oss-120b",
+                "temperature": 0,
+                "limitation": "Remote model revision/seed support must be recorded separately by the operator."
+              },
+              "judge_roles": [
+                "judge",
+                "validate_outcome"
+              ]
+            }
+          }
+        },
+        "elapsed_seconds": 405.13245950001874,
+        "note": "Execution/online validation only. Final rates require independent manual/evaluation review; fixtures are not research evidence."
+      },
+      "holdout": {
+        "phase": 3,
+        "variant": "B0",
+        "is_mock": false,
+        "research_results": false,
+        "input_examples": 20,
+        "processed": 20,
+        "answered": 20,
+        "unanswered": 0,
+        "truncated_answers": 0,
+        "events_with_errors": 0,
+        "feedback_missing": 0,
+        "budget_exhausted": false,
+        "learning_frozen": false,
+        "active_rules": 2,
+        "final_memory_version": 1,
+        "decisions": {},
+        "admission_attempts": 0,
+        "maintenance_attempts": 0,
+        "validation_cache_hits": 0,
+        "replay_entries": 0,
+        "feedback_noise": {
+          "eligible": 0,
+          "false_positive": 0,
+          "false_negative": 0
+        },
+        "usage": {
+          "total_calls": 63,
+          "max_total_calls": 500,
+          "inference": {
+            "calls": 63,
+            "max_calls": 500,
+            "input_tokens": 18554,
+            "output_tokens": 3369,
+            "unknown_usage_calls": 0,
+            "is_mock": false,
+            "model": "Qwen/Qwen2.5-7B-Instruct",
+            "routing": {
+              "backend": "role-routing",
+              "model": "Qwen/Qwen2.5-7B-Instruct",
+              "primary": {
+                "backend": "transformers",
+                "model": "Qwen/Qwen2.5-7B-Instruct",
+                "requested_revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+                "resolved_revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+                "device": "cuda",
+                "seed": 17,
+                "context_limit": 4096,
+                "do_sample": false,
+                "weights_frozen": true,
+                "quantization": "bnb-nf4-4bit-fp16-compute"
+              },
+              "judge": {
+                "backend": "compatible-http",
+                "model": "openai/gpt-oss-120b",
+                "temperature": 0,
+                "limitation": "Remote model revision/seed support must be recorded separately by the operator."
+              },
+              "judge_roles": [
+                "judge",
+                "validate_outcome"
+              ]
+            }
+          },
+          "learning": {
+            "calls": 0,
+            "max_calls": 120,
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "unknown_usage_calls": 0,
+            "is_mock": false,
+            "model": "Qwen/Qwen2.5-7B-Instruct",
+            "routing": {
+              "backend": "role-routing",
+              "model": "Qwen/Qwen2.5-7B-Instruct",
+              "primary": {
+                "backend": "transformers",
+                "model": "Qwen/Qwen2.5-7B-Instruct",
+                "requested_revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+                "resolved_revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+                "device": "cuda",
+                "seed": 17,
+                "context_limit": 4096,
+                "do_sample": false,
+                "weights_frozen": true,
+                "quantization": "bnb-nf4-4bit-fp16-compute"
+              },
+              "judge": {
+                "backend": "compatible-http",
+                "model": "openai/gpt-oss-120b",
+                "temperature": 0,
+                "limitation": "Remote model revision/seed support must be recorded separately by the operator."
+              },
+              "judge_roles": [
+                "judge",
+                "validate_outcome"
+              ]
+            }
+          },
+          "validation": {
+            "calls": 0,
+            "max_calls": 240,
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "unknown_usage_calls": 0,
+            "is_mock": false,
+            "model": "Qwen/Qwen2.5-7B-Instruct",
+            "routing": {
+              "backend": "role-routing",
+              "model": "Qwen/Qwen2.5-7B-Instruct",
+              "primary": {
+                "backend": "transformers",
+                "model": "Qwen/Qwen2.5-7B-Instruct",
+                "requested_revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+                "resolved_revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+                "device": "cuda",
+                "seed": 17,
+                "context_limit": 4096,
+                "do_sample": false,
+                "weights_frozen": true,
+                "quantization": "bnb-nf4-4bit-fp16-compute"
+              },
+              "judge": {
+                "backend": "compatible-http",
+                "model": "openai/gpt-oss-120b",
+                "temperature": 0,
+                "limitation": "Remote model revision/seed support must be recorded separately by the operator."
+              },
+              "judge_roles": [
+                "judge",
+                "validate_outcome"
+              ]
+            }
+          }
+        },
+        "elapsed_seconds": 153.23713519997546,
+        "note": "Execution/online validation only. Final rates require independent manual/evaluation review; fixtures are not research evidence."
+      },
+      "asr": null,
+      "false_refusal_rate": null,
+      "benign_task_success": null,
+      "scoring_status": "awaiting independent holdout review"
+    },
+    {
+      "seed": 17,
+      "variant": "B1",
+      "adaptation": {
+        "phase": 3,
+        "variant": "B1",
+        "is_mock": false,
+        "research_results": false,
+        "input_examples": 40,
+        "processed": 40,
+        "answered": 40,
+        "unanswered": 0,
+        "truncated_answers": 0,
+        "events_with_errors": 0,
+        "feedback_missing": 0,
+        "budget_exhausted": false,
+        "learning_frozen": false,
+        "active_rules": 1,
+        "final_memory_version": 1,
+        "decisions": {
+          "accepted": 1,
+          "deferred": 1
+        },
+        "admission_attempts": 4,
+        "maintenance_attempts": 0,
+        "validation_cache_hits": 10,
+        "replay_entries": 22,
+        "feedback_noise": {
+          "eligible": 36,
+          "false_positive": 0,
+          "false_negative": 0
+        },
+        "usage": {
+          "total_calls": 328,
+          "max_total_calls": 2000,
+          "inference": {
+            "calls": 120,
+            "max_calls": 2000,
+            "input_tokens": 30577,
+            "output_tokens": 7744,
+            "unknown_usage_calls": 0,
+            "is_mock": false,
+            "model": "Qwen/Qwen2.5-7B-Instruct",
+            "routing": {
+              "backend": "role-routing",
+              "model": "Qwen/Qwen2.5-7B-Instruct",
+              "primary": {
+                "backend": "transformers",
+                "model": "Qwen/Qwen2.5-7B-Instruct",
+                "requested_revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+                "resolved_revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+                "device": "cuda",
+                "seed": 17,
+                "context_limit": 4096,
+                "do_sample": false,
+                "weights_frozen": true,
+                "quantization": "bnb-nf4-4bit-fp16-compute"
+              },
+              "judge": {
+                "backend": "compatible-http",
+                "model": "openai/gpt-oss-120b",
+                "temperature": 0,
+                "limitation": "Remote model revision/seed support must be recorded separately by the operator."
+              },
+              "judge_roles": [
+                "judge",
+                "validate_outcome"
+              ]
+            }
+          },
+          "learning": {
+            "calls": 45,
+            "max_calls": 120,
+            "input_tokens": 34506,
+            "output_tokens": 10460,
+            "unknown_usage_calls": 0,
+            "is_mock": false,
+            "model": "Qwen/Qwen2.5-7B-Instruct",
+            "routing": {
+              "backend": "role-routing",
+              "model": "Qwen/Qwen2.5-7B-Instruct",
+              "primary": {
+                "backend": "transformers",
+                "model": "Qwen/Qwen2.5-7B-Instruct",
+                "requested_revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+                "resolved_revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+                "device": "cuda",
+                "seed": 17,
+                "context_limit": 4096,
+                "do_sample": false,
+                "weights_frozen": true,
+                "quantization": "bnb-nf4-4bit-fp16-compute"
+              },
+              "judge": {
+                "backend": "compatible-http",
+                "model": "openai/gpt-oss-120b",
+                "temperature": 0,
+                "limitation": "Remote model revision/seed support must be recorded separately by the operator."
+              },
+              "judge_roles": [
+                "judge",
+                "validate_outcome"
+              ]
+            }
+          },
+          "validation": {
+            "calls": 163,
+            "max_calls": 240,
+            "input_tokens": 66074,
+            "output_tokens": 19859,
+            "unknown_usage_calls": 0,
+            "is_mock": false,
+            "model": "Qwen/Qwen2.5-7B-Instruct",
+            "routing": {
+              "backend": "role-routing",
+              "model": "Qwen/Qwen2.5-7B-Instruct",
+              "primary": {
+                "backend": "transformers",
+                "model": "Qwen/Qwen2.5-7B-Instruct",
+                "requested_revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+                "resolved_revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+                "device": "cuda",
+                "seed": 17,
+                "context_limit": 4096,
+                "do_sample": false,
+                "weights_frozen": true,
+                "quantization": "bnb-nf4-4bit-fp16-compute"
+              },
+              "judge": {
+                "backend": "compatible-http",
+                "model": "openai/gpt-oss-120b",
+                "temperature": 0,
+                "limitation": "Remote model revision/seed support must be recorded separately by the operator."
+              },
+              "judge_roles": [
+                "judge",
+                "validate_outcome"
+              ]
+            }
+          }
+        },
+        "elapsed_seconds": 936.2706412000116,
+        "note": "Execution/online validation only. Final rates require independent manual/evaluation review; fixtures are not research evidence."
+      },
+      "holdout": {
+        "phase": 3,
+        "variant": "B1",
+        "is_mock": false,
+        "research_results": false,
+        "input_examples": 20,
+        "processed": 20,
+        "answered": 20,
+        "unanswered": 0,
+        "truncated_answers": 0,
+        "events_with_errors": 0,
+        "feedback_missing": 0,
+        "budget_exhausted": false,
+        "learning_frozen": false,
+        "active_rules": 1,
+        "final_memory_version": 1,
+        "decisions": {},
+        "admission_attempts": 0,
+        "maintenance_attempts": 0,
+        "validation_cache_hits": 0,
+        "replay_entries": 0,
+        "feedback_noise": {
+          "eligible": 0,
+          "false_positive": 0,
+          "false_negative": 0
+        },
+        "usage": {
+          "total_calls": 65,
+          "max_total_calls": 500,
+          "inference": {
+            "calls": 65,
+            "max_calls": 500,
+            "input_tokens": 17602,
+            "output_tokens": 3046,
+            "unknown_usage_calls": 0,
+            "is_mock": false,
+            "model": "Qwen/Qwen2.5-7B-Instruct",
+            "routing": {
+              "backend": "role-routing",
+              "model": "Qwen/Qwen2.5-7B-Instruct",
+              "primary": {
+                "backend": "transformers",
+                "model": "Qwen/Qwen2.5-7B-Instruct",
+                "requested_revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+                "resolved_revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+                "device": "cuda",
+                "seed": 17,
+                "context_limit": 4096,
+                "do_sample": false,
+                "weights_frozen": true,
+                "quantization": "bnb-nf4-4bit-fp16-compute"
+              },
+              "judge": {
+                "backend": "compatible-http",
+                "model": "openai/gpt-oss-120b",
+                "temperature": 0,
+                "limitation": "Remote model revision/seed support must be recorded separately by the operator."
+              },
+              "judge_roles": [
+                "judge",
+                "validate_outcome"
+              ]
+            }
+          },
+          "learning": {
+            "calls": 0,
+            "max_calls": 120,
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "unknown_usage_calls": 0,
+            "is_mock": false,
+            "model": "Qwen/Qwen2.5-7B-Instruct",
+            "routing": {
+              "backend": "role-routing",
+              "model": "Qwen/Qwen2.5-7B-Instruct",
+              "primary": {
+                "backend": "transformers",
+                "model": "Qwen/Qwen2.5-7B-Instruct",
+                "requested_revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+                "resolved_revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+                "device": "cuda",
+                "seed": 17,
+                "context_limit": 4096,
+                "do_sample": false,
+                "weights_frozen": true,
+                "quantization": "bnb-nf4-4bit-fp16-compute"
+              },
+              "judge": {
+                "backend": "compatible-http",
+                "model": "openai/gpt-oss-120b",
+                "temperature": 0,
+                "limitation": "Remote model revision/seed support must be recorded separately by the operator."
+              },
+              "judge_roles": [
+                "judge",
+                "validate_outcome"
+              ]
+            }
+          },
+          "validation": {
+            "calls": 0,
+            "max_calls": 240,
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "unknown_usage_calls": 0,
+            "is_mock": false,
+            "model": "Qwen/Qwen2.5-7B-Instruct",
+            "routing": {
+              "backend": "role-routing",
+              "model": "Qwen/Qwen2.5-7B-Instruct",
+              "primary": {
+                "backend": "transformers",
+                "model": "Qwen/Qwen2.5-7B-Instruct",
+                "requested_revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+                "resolved_revision": "a09a35458c702b33eeacc393d103063234e8bc28",
+                "device": "cuda",
+                "seed": 17,
+                "context_limit": 4096,
+                "do_sample": false,
+                "weights_frozen": true,
+                "quantization": "bnb-nf4-4bit-fp16-compute"
+              },
+              "judge": {
+                "backend": "compatible-http",
+                "model": "openai/gpt-oss-120b",
+                "temperature": 0,
+                "limitation": "Remote model revision/seed support must be recorded separately by the operator."
+              },
+              "judge_roles": [
+                "judge",
+                "validate_outcome"
+              ]
+            }
+          }
+        },
+        "elapsed_seconds": 138.83295449998695,
+        "note": "Execution/online validation only. Final rates require independent manual/evaluation review; fixtures are not research evidence."
+      },
+      "asr": null,
+      "false_refusal_rate": null,
+      "benign_task_success": null,
+      "scoring_status": "awaiting independent holdout review"
+    }
+  ],
+  "review_rows": 80,
+  "expected_holdout_outcomes": 80,
+  "unanswered_holdout": 0,
+  "total_model_calls": 1468,
+  "execution_complete": true,
+  "note": "No performance rates are inferred from online learning feedback. Review the blinded queue before scoring. Synthetic runs remain mock evidence."
+}

@@ -8,6 +8,28 @@ import os
 from shrek import __version__
 
 
+def build_judge(args, parser):
+    """Optional separate OpenAI-compatible API model for the evaluator roles; validated before any model loads."""
+    if not args.judge_model and not args.judge_base_url:
+        return None
+    if not (args.judge_model and args.judge_base_url):
+        parser.error("Provide both --judge-model and --judge-base-url (or JUDGE_MODEL and JUDGE_BASE_URL)")
+    if args.judge_retries < 0:
+        parser.error("--judge-retries must be non-negative")
+    from shrek.backends import CompatibleHTTPBackend
+    key = os.environ.get("JUDGE_API_KEY")
+    if not key:
+        parser.error("Set JUDGE_API_KEY in the environment for the judge API")
+    return CompatibleHTTPBackend(args.judge_base_url, args.judge_model, key, rate_limit_retries=args.judge_retries)
+
+
+def with_judge(backend, judge):
+    if judge is None:
+        return backend
+    from shrek.backends import RoleRoutingBackend
+    return RoleRoutingBackend(backend, judge)
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(
         prog="shrek",
@@ -46,6 +68,9 @@ def main() -> None:
     system.add_argument("--max-calls", type=int, default=2000)
     system.add_argument("--max-output-tokens", type=int, default=384)
     system.add_argument("--output", default=None)
+    system.add_argument("--judge-model", default=os.environ.get("JUDGE_MODEL"), help="Route judge/validate_outcome roles to this API model")
+    system.add_argument("--judge-base-url", default=os.environ.get("JUDGE_BASE_URL"), help="OpenAI-compatible HTTPS base URL for the judge")
+    system.add_argument("--judge-retries", type=int, default=6, help="Retries on HTTP 429 rate limits only")
     prepare = commands.add_parser("prepare-study", help="Prepare a pinned 80-example PAIR/XSTest pilot")
     prepare.add_argument("--output", required=True)
     prepare.add_argument("--source-dir", default=None, help="Optional local snapshots named pair.json, xstest.csv, and license files")
@@ -72,6 +97,11 @@ def main() -> None:
     compare.add_argument("--holdout-calls", type=int, default=500)
     compare.add_argument("--max-output-tokens", type=int, default=384)
     compare.add_argument("--output", default=None)
+    compare.add_argument("--reuse", nargs="+", default=[], metavar="VARIANT=STUDY_DIR",
+                         help="Copy completed variants from an earlier study after verifying identical settings")
+    compare.add_argument("--judge-model", default=os.environ.get("JUDGE_MODEL"), help="Route judge/validate_outcome roles to this API model")
+    compare.add_argument("--judge-base-url", default=os.environ.get("JUDGE_BASE_URL"), help="OpenAI-compatible HTTPS base URL for the judge")
+    compare.add_argument("--judge-retries", type=int, default=6, help="Retries on HTTP 429 rate limits only")
     score = commands.add_parser("score-study", help="Compute rates/bounds from independent review, preserving missing outcomes")
     score.add_argument("study_dir")
     score.add_argument("--reviews", required=True)
@@ -162,11 +192,20 @@ def main() -> None:
         output = args.output or "runs/study-" + datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S%fZ")
         if Path(output).exists():
             parser.error("Choose a fresh study output directory")
+        reuse = {}
+        for item in args.reuse:
+            name, _, path = item.partition("=")
+            if name not in {"B0", "B1", "B2", "B3"} or not path or name in reuse or not Path(path).is_dir():
+                parser.error("Use --reuse VARIANT=EXISTING_STUDY_DIR with distinct variants B0-B3")
+            reuse[name] = path
+        judge = build_judge(args, parser)
         backend = (TransformersBackend(args.model, args.revision, args.device, args.context_limit, args.seeds[0], load_in_4bit=args.load_in_4bit)
                    if args.backend == "transformers" else CompatibleHTTPBackend(args.base_url, args.model, os.environ.get("MODEL_API_KEY")))
+        backend = with_judge(backend, judge)
         report = run_study(examples, backend, config, output, seeds=tuple(args.seeds), max_calls=args.max_calls,
                            holdout_calls=args.holdout_calls, max_output_tokens=args.max_output_tokens,
-                           noise_rate=args.noise_rate, order=args.order, progress=lambda state: print(json.dumps({"progress": state}), flush=True))
+                           noise_rate=args.noise_rate, order=args.order, progress=lambda state: print(json.dumps({"progress": state}), flush=True),
+                           reuse=reuse)
         print(json.dumps({"output": output, "is_mock": report["is_mock"], "execution_complete": report["execution_complete"],
                           "review_rows": report["review_rows"], "unanswered_holdout": report["unanswered_holdout"],
                           "total_model_calls": report["total_model_calls"], "note": report["note"]}, indent=2))
@@ -203,8 +242,10 @@ def main() -> None:
         output = args.output or "runs/system-" + datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S%fZ")
         if Path(output).exists():
             parser.error("Choose a fresh output directory")
+        judge = build_judge(args, parser)
         backend = (TransformersBackend(args.model, args.revision, args.device, args.context_limit, args.seed, load_in_4bit=args.load_in_4bit)
                    if args.backend == "transformers" else CompatibleHTTPBackend(args.base_url, args.model, os.environ.get("MODEL_API_KEY")))
+        backend = with_judge(backend, judge)
         summary = run_system(selected, backend, config, output, anchors=anchors, learning=not args.no_learning,
                              max_calls=args.max_calls, max_output_tokens=args.max_output_tokens, initial_rules=initial,
                              noise_rate=args.noise_rate, seed=args.seed)

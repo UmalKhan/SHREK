@@ -1,0 +1,534 @@
+{
+  "phase": 4,
+  "is_mock": false,
+  "research_results": false,
+  "runs": [
+    {
+      "seed": 17,
+      "variant": "B2",
+      "adaptation": {
+        "phase": 3,
+        "variant": "B2",
+        "is_mock": false,
+        "research_results": false,
+        "input_examples": 40,
+        "processed": 40,
+        "answered": 40,
+        "unanswered": 0,
+        "truncated_answers": 0,
+        "events_with_errors": 0,
+        "feedback_missing": 0,
+        "budget_exhausted": false,
+        "learning_frozen": false,
+        "active_rules": 1,
+        "final_memory_version": 1,
+        "decisions": {
+          "accepted": 1,
+          "deferred": 2
+        },
+        "admission_attempts": 2,
+        "maintenance_attempts": 2,
+        "validation_cache_hits": 15,
+        "replay_entries": 28,
+        "feedback_noise": {
+          "eligible": 28,
+          "false_positive": 0,
+          "false_negative": 0
+        },
+        "usage": {
+          "total_calls": 205,
+          "max_total_calls": 2000,
+          "inference": {
+            "calls": 101,
+            "max_calls": 2000,
+            "input_tokens": 25892,
+            "output_tokens": 7103,
+            "unknown_usage_calls": 0,
+            "is_mock": false,
+            "model": "Qwen/Qwen2.5-7B-Instruct"
+          },
+          "learning": {
+            "calls": 44,
+            "max_calls": 120,
+            "input_tokens": 29589,
+            "output_tokens": 2593,
+            "unknown_usage_calls": 0,
+            "is_mock": false,
+            "model": "Qwen/Qwen2.5-7B-Instruct"
+          },
+          "validation": {
+            "calls": 60,
+            "max_calls": 240,
+            "input_tokens": 24600,
+            "output_tokens": 3955,
+            "unknown_usage_calls": 0,
+            "is_mock": false,
+            "model": "Qwen/Qwen2.5-7B-Instruct"
+          }
+        },
+        "elapsed_seconds": 620.6079734999803,
+        "note": "Execution/online validation only. Final rates require independent manual/evaluation review; fixtures are not research evidence."
+      },
+      "holdout": {
+        "phase": 3,
+        "variant": "B2",
+        "is_mock": false,
+        "research_results": false,
+        "input_examples": 20,
+        "processed": 20,
+        "answered": 20,
+        "unanswered": 0,
+        "truncated_answers": 0,
+        "events_with_errors": 0,
+        "feedback_missing": 0,
+        "budget_exhausted": false,
+        "learning_frozen": false,
+        "active_rules": 1,
+        "final_memory_version": 1,
+        "decisions": {},
+        "admission_attempts": 0,
+        "maintenance_attempts": 0,
+        "validation_cache_hits": 0,
+        "replay_entries": 0,
+        "feedback_noise": {
+          "eligible": 0,
+          "false_positive": 0,
+          "false_negative": 0
+        },
+        "usage": {
+          "total_calls": 62,
+          "max_total_calls": 500,
+          "inference": {
+            "calls": 62,
+            "max_calls": 500,
+            "input_tokens": 17881,
+            "output_tokens": 1757,
+            "unknown_usage_calls": 0,
+            "is_mock": false,
+            "model": "Qwen/Qwen2.5-7B-Instruct"
+          },
+          "learning": {
+            "calls": 0,
+            "max_calls": 120,
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "unknown_usage_calls": 0,
+            "is_mock": false,
+            "model": "Qwen/Qwen2.5-7B-Instruct"
+          },
+          "validation": {
+            "calls": 0,
+            "max_calls": 240,
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "unknown_usage_calls": 0,
+            "is_mock": false,
+            "model": "Qwen/Qwen2.5-7B-Instruct"
+          }
+        },
+        "elapsed_seconds": 84.363211399992,
+        "note": "Execution/online validation only. Final rates require independent manual/evaluation review; fixtures are not research evidence."
+      },
+      "asr": null,
+      "false_refusal_rate": null,
+      "benign_task_success": null,
+      "scoring_status": "awaiting independent holdout review"
+    },
+    {
+      "seed": 17,
+      "variant": "B3",
+      "adaptation": {
+        "phase": 3,
+        "variant": "B3",
+        "is_mock": false,
+        "research_results": false,
+        "input_examples": 40,
+        "processed": 40,
+        "answered": 40,
+        "unanswered": 0,
+        "truncated_answers": 0,
+        "events_with_errors": 0,
+        "feedback_missing": 0,
+        "budget_exhausted": false,
+        "learning_frozen": false,
+        "active_rules": 0,
+        "final_memory_version": 0,
+        "decisions": {
+          "deferred": 3
+        },
+        "admission_attempts": 4,
+        "maintenance_attempts": 0,
+        "validation_cache_hits": 11,
+        "replay_entries": 35,
+        "feedback_noise": {
+          "eligible": 36,
+          "false_positive": 0,
+          "false_negative": 0
+        },
+        "usage": {
+          "total_calls": 273,
+          "max_total_calls": 2000,
+          "inference": {
+            "calls": 80,
+            "max_calls": 2000,
+            "input_tokens": 15128,
+            "output_tokens": 10811,
+            "unknown_usage_calls": 0,
+            "is_mock": false,
+            "model": "Qwen/Qwen2.5-7B-Instruct"
+          },
+          "learning": {
+            "calls": 44,
+            "max_calls": 120,
+            "input_tokens": 35322,
+            "output_tokens": 2891,
+            "unknown_usage_calls": 0,
+            "is_mock": false,
+            "model": "Qwen/Qwen2.5-7B-Instruct"
+          },
+          "validation": {
+            "calls": 149,
+            "max_calls": 240,
+            "input_tokens": 61971,
+            "output_tokens": 11431,
+            "unknown_usage_calls": 0,
+            "is_mock": false,
+            "model": "Qwen/Qwen2.5-7B-Instruct"
+          }
+        },
+        "elapsed_seconds": 1124.4068270999996,
+        "note": "Execution/online validation only. Final rates require independent manual/evaluation review; fixtures are not research evidence."
+      },
+      "holdout": {
+        "phase": 3,
+        "variant": "B3",
+        "is_mock": false,
+        "research_results": false,
+        "input_examples": 20,
+        "processed": 20,
+        "answered": 20,
+        "unanswered": 0,
+        "truncated_answers": 0,
+        "events_with_errors": 0,
+        "feedback_missing": 0,
+        "budget_exhausted": false,
+        "learning_frozen": false,
+        "active_rules": 0,
+        "final_memory_version": 0,
+        "decisions": {},
+        "admission_attempts": 0,
+        "maintenance_attempts": 0,
+        "validation_cache_hits": 0,
+        "replay_entries": 0,
+        "feedback_noise": {
+          "eligible": 0,
+          "false_positive": 0,
+          "false_negative": 0
+        },
+        "usage": {
+          "total_calls": 40,
+          "max_total_calls": 500,
+          "inference": {
+            "calls": 40,
+            "max_calls": 500,
+            "input_tokens": 7440,
+            "output_tokens": 5852,
+            "unknown_usage_calls": 0,
+            "is_mock": false,
+            "model": "Qwen/Qwen2.5-7B-Instruct"
+          },
+          "learning": {
+            "calls": 0,
+            "max_calls": 120,
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "unknown_usage_calls": 0,
+            "is_mock": false,
+            "model": "Qwen/Qwen2.5-7B-Instruct"
+          },
+          "validation": {
+            "calls": 0,
+            "max_calls": 240,
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "unknown_usage_calls": 0,
+            "is_mock": false,
+            "model": "Qwen/Qwen2.5-7B-Instruct"
+          }
+        },
+        "elapsed_seconds": 253.0794726999884,
+        "note": "Execution/online validation only. Final rates require independent manual/evaluation review; fixtures are not research evidence."
+      },
+      "asr": null,
+      "false_refusal_rate": null,
+      "benign_task_success": null,
+      "scoring_status": "awaiting independent holdout review"
+    },
+    {
+      "seed": 17,
+      "variant": "B0",
+      "adaptation": {
+        "phase": 3,
+        "variant": "B0",
+        "is_mock": false,
+        "research_results": false,
+        "input_examples": 40,
+        "processed": 40,
+        "answered": 40,
+        "unanswered": 0,
+        "truncated_answers": 0,
+        "events_with_errors": 0,
+        "feedback_missing": 0,
+        "budget_exhausted": false,
+        "learning_frozen": false,
+        "active_rules": 1,
+        "final_memory_version": 1,
+        "decisions": {
+          "accepted": 1
+        },
+        "admission_attempts": 2,
+        "maintenance_attempts": 0,
+        "validation_cache_hits": 0,
+        "replay_entries": 28,
+        "feedback_noise": {
+          "eligible": 28,
+          "false_positive": 0,
+          "false_negative": 0
+        },
+        "usage": {
+          "total_calls": 143,
+          "max_total_calls": 2000,
+          "inference": {
+            "calls": 101,
+            "max_calls": 2000,
+            "input_tokens": 25892,
+            "output_tokens": 7103,
+            "unknown_usage_calls": 0,
+            "is_mock": false,
+            "model": "Qwen/Qwen2.5-7B-Instruct"
+          },
+          "learning": {
+            "calls": 42,
+            "max_calls": 120,
+            "input_tokens": 28762,
+            "output_tokens": 2485,
+            "unknown_usage_calls": 0,
+            "is_mock": false,
+            "model": "Qwen/Qwen2.5-7B-Instruct"
+          },
+          "validation": {
+            "calls": 0,
+            "max_calls": 240,
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "unknown_usage_calls": 0,
+            "is_mock": false,
+            "model": "Qwen/Qwen2.5-7B-Instruct"
+          }
+        },
+        "elapsed_seconds": 435.06031110000913,
+        "note": "Execution/online validation only. Final rates require independent manual/evaluation review; fixtures are not research evidence."
+      },
+      "holdout": {
+        "phase": 3,
+        "variant": "B0",
+        "is_mock": false,
+        "research_results": false,
+        "input_examples": 20,
+        "processed": 20,
+        "answered": 20,
+        "unanswered": 0,
+        "truncated_answers": 0,
+        "events_with_errors": 0,
+        "feedback_missing": 0,
+        "budget_exhausted": false,
+        "learning_frozen": false,
+        "active_rules": 1,
+        "final_memory_version": 1,
+        "decisions": {},
+        "admission_attempts": 0,
+        "maintenance_attempts": 0,
+        "validation_cache_hits": 0,
+        "replay_entries": 0,
+        "feedback_noise": {
+          "eligible": 0,
+          "false_positive": 0,
+          "false_negative": 0
+        },
+        "usage": {
+          "total_calls": 62,
+          "max_total_calls": 500,
+          "inference": {
+            "calls": 62,
+            "max_calls": 500,
+            "input_tokens": 17881,
+            "output_tokens": 1757,
+            "unknown_usage_calls": 0,
+            "is_mock": false,
+            "model": "Qwen/Qwen2.5-7B-Instruct"
+          },
+          "learning": {
+            "calls": 0,
+            "max_calls": 120,
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "unknown_usage_calls": 0,
+            "is_mock": false,
+            "model": "Qwen/Qwen2.5-7B-Instruct"
+          },
+          "validation": {
+            "calls": 0,
+            "max_calls": 240,
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "unknown_usage_calls": 0,
+            "is_mock": false,
+            "model": "Qwen/Qwen2.5-7B-Instruct"
+          }
+        },
+        "elapsed_seconds": 84.50859610000043,
+        "note": "Execution/online validation only. Final rates require independent manual/evaluation review; fixtures are not research evidence."
+      },
+      "asr": null,
+      "false_refusal_rate": null,
+      "benign_task_success": null,
+      "scoring_status": "awaiting independent holdout review"
+    },
+    {
+      "seed": 17,
+      "variant": "B1",
+      "adaptation": {
+        "phase": 3,
+        "variant": "B1",
+        "is_mock": false,
+        "research_results": false,
+        "input_examples": 40,
+        "processed": 40,
+        "answered": 40,
+        "unanswered": 0,
+        "truncated_answers": 0,
+        "events_with_errors": 0,
+        "feedback_missing": 0,
+        "budget_exhausted": false,
+        "learning_frozen": false,
+        "active_rules": 0,
+        "final_memory_version": 0,
+        "decisions": {
+          "deferred": 3
+        },
+        "admission_attempts": 4,
+        "maintenance_attempts": 0,
+        "validation_cache_hits": 11,
+        "replay_entries": 35,
+        "feedback_noise": {
+          "eligible": 36,
+          "false_positive": 0,
+          "false_negative": 0
+        },
+        "usage": {
+          "total_calls": 273,
+          "max_total_calls": 2000,
+          "inference": {
+            "calls": 80,
+            "max_calls": 2000,
+            "input_tokens": 15128,
+            "output_tokens": 10811,
+            "unknown_usage_calls": 0,
+            "is_mock": false,
+            "model": "Qwen/Qwen2.5-7B-Instruct"
+          },
+          "learning": {
+            "calls": 44,
+            "max_calls": 120,
+            "input_tokens": 35322,
+            "output_tokens": 2891,
+            "unknown_usage_calls": 0,
+            "is_mock": false,
+            "model": "Qwen/Qwen2.5-7B-Instruct"
+          },
+          "validation": {
+            "calls": 149,
+            "max_calls": 240,
+            "input_tokens": 61971,
+            "output_tokens": 11431,
+            "unknown_usage_calls": 0,
+            "is_mock": false,
+            "model": "Qwen/Qwen2.5-7B-Instruct"
+          }
+        },
+        "elapsed_seconds": 1124.8874254999973,
+        "note": "Execution/online validation only. Final rates require independent manual/evaluation review; fixtures are not research evidence."
+      },
+      "holdout": {
+        "phase": 3,
+        "variant": "B1",
+        "is_mock": false,
+        "research_results": false,
+        "input_examples": 20,
+        "processed": 20,
+        "answered": 20,
+        "unanswered": 0,
+        "truncated_answers": 0,
+        "events_with_errors": 0,
+        "feedback_missing": 0,
+        "budget_exhausted": false,
+        "learning_frozen": false,
+        "active_rules": 0,
+        "final_memory_version": 0,
+        "decisions": {},
+        "admission_attempts": 0,
+        "maintenance_attempts": 0,
+        "validation_cache_hits": 0,
+        "replay_entries": 0,
+        "feedback_noise": {
+          "eligible": 0,
+          "false_positive": 0,
+          "false_negative": 0
+        },
+        "usage": {
+          "total_calls": 40,
+          "max_total_calls": 500,
+          "inference": {
+            "calls": 40,
+            "max_calls": 500,
+            "input_tokens": 7440,
+            "output_tokens": 5852,
+            "unknown_usage_calls": 0,
+            "is_mock": false,
+            "model": "Qwen/Qwen2.5-7B-Instruct"
+          },
+          "learning": {
+            "calls": 0,
+            "max_calls": 120,
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "unknown_usage_calls": 0,
+            "is_mock": false,
+            "model": "Qwen/Qwen2.5-7B-Instruct"
+          },
+          "validation": {
+            "calls": 0,
+            "max_calls": 240,
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "unknown_usage_calls": 0,
+            "is_mock": false,
+            "model": "Qwen/Qwen2.5-7B-Instruct"
+          }
+        },
+        "elapsed_seconds": 252.78493160000653,
+        "note": "Execution/online validation only. Final rates require independent manual/evaluation review; fixtures are not research evidence."
+      },
+      "asr": null,
+      "false_refusal_rate": null,
+      "benign_task_success": null,
+      "scoring_status": "awaiting independent holdout review"
+    }
+  ],
+  "review_rows": 80,
+  "expected_holdout_outcomes": 80,
+  "unanswered_holdout": 0,
+  "total_model_calls": 1098,
+  "execution_complete": true,
+  "note": "No performance rates are inferred from online learning feedback. Review the blinded queue before scoring. Synthetic runs remain mock evidence."
+}

@@ -161,3 +161,15 @@ def test_unknown_safety_cannot_be_marked_useful_legitimate_completion(tmp_path):
         writer.writerows(rows)
     with pytest.raises(ValueError, match="explicit"):
         score_study(output, path)
+
+
+def test_reused_variants_match_a_full_run_and_mismatches_are_refused(tmp_path):
+    full = tmp_path / "full"
+    fixture_run(full)
+    partial = tmp_path / "partial"
+    fixture_run(partial, reuse={"B2": str(full), "B3": str(full)})
+    assert (partial / "seed-17/B2/REUSED_FROM.txt").exists()
+    assert (partial / "review_queue.csv").read_text(encoding="utf-8") == (full / "review_queue.csv").read_text(encoding="utf-8")
+    assert json.loads((partial / "review_key.json").read_text()) == json.loads((full / "review_key.json").read_text())
+    with pytest.raises(ValueError, match="Cannot reuse"):
+        fixture_run(tmp_path / "mismatch", noise_rate=0.1, reuse={"B2": str(full)})

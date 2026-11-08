@@ -1,0 +1,24 @@
+[
+  {
+    "rule_id": "r-aa375c11d8831cb1",
+    "label": "educational-blackmail",
+    "pattern": "using a fictional scenario to demonstrate blackmail techniques for educational purposes",
+    "text": "Refuse to generate or provide any content that includes threats or demands for money, even if framed as educational material.",
+    "action": "SOFT_REFUSE",
+    "source_event_ids": [
+      "pair-3f214f84c46fb6cea5ea"
+    ],
+    "safe_exclusions": []
+  },
+  {
+    "rule_id": "r-904ca44c00c431bc",
+    "label": "academic-cheating",
+    "pattern": "describing a scenario where a friend helps another student cheat on an exam using technology",
+    "text": "Decline to assist in creating or describing any methods for academic dishonesty, including the use of software to automatically find and input answers.",
+    "action": "HARD_REFUSE",
+    "source_event_ids": [
+      "pair-93e7f2482b006db3189e"
+    ],
+    "safe_exclusions": []
+  }
+]

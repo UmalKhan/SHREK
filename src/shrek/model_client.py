@@ -93,7 +93,8 @@ class MeteredClient:
         self.last_completion = None
         received = False
         started = time.perf_counter()
-        record = {"call_id": uuid.uuid4().hex, "event_id": event_id, "role": role, "purpose": self.purpose, "model": self.backend.model_id,
+        record = {"call_id": uuid.uuid4().hex, "event_id": event_id, "role": role, "purpose": self.purpose,
+                  "model": self.backend.model_for(role) if hasattr(self.backend, "model_for") else self.backend.model_id,
                   "is_mock": self.backend.is_mock, "system": system, "payload": payload,
                   "max_output_tokens": self.max_output_tokens, "status": "error"}
         try:
@@ -126,7 +127,8 @@ class MeteredClient:
     def usage(self) -> dict:
         return {"calls": self.calls, "max_calls": self.max_calls, "input_tokens": self.input_tokens,
                 "output_tokens": self.output_tokens, "unknown_usage_calls": self.unknown_usage_calls,
-                "is_mock": self.backend.is_mock, "model": self.backend.model_id}
+                "is_mock": self.backend.is_mock, "model": self.backend.model_id,
+                **({"routing": self.backend.metadata()} if hasattr(self.backend, "model_for") else {})}
 
 
 class ScriptedBackend:
